@@ -21,7 +21,6 @@ class Repository extends Component {
       return axios.get(repos_url);
     })
     .then(response => {
-      console.log(response.data);
       this.setState({
         repos: ds.cloneWithRows(response.data),
       });
@@ -33,6 +32,7 @@ class Repository extends Component {
     return (
       <ListView
         dataSource={this.state.repos}
+        enableEmptySections={true}
         renderRow={data => <RepositoryItem data={data}></RepositoryItem>}
         renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
       >

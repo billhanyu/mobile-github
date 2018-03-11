@@ -14,9 +14,11 @@ class RepositoryItem extends Component {
         }}
       >
         <View style={styles.container}>
-          <Text>{data.name}</Text>
-          <Text>{ownerUsername}</Text>
-          <Text>{data.description}</Text>
+          <View style={styles.gen}>
+            <Text style={styles.repoName}>{data.name}</Text>
+            <Text style={styles.text}>{ownerUsername}</Text>
+          </View>
+          <Text style={styles.text}>{data.description}</Text>
         </View>
       </TouchableOpacity>
     );
@@ -32,6 +34,15 @@ const styles = StyleSheet.create({
     marginLeft: 12,
     fontSize: 16,
   },
+  repoName: {
+    marginLeft: 12,
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  gen: {
+    flex: 1,
+    flexDirection: 'row'
+  }
 });
 
 export default RepositoryItem;

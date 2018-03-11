@@ -33,6 +33,7 @@ export default class App extends React.Component {
           <Profile setTab={this.setTab}/>
         </TabBarIOS.Item>
         <TabBarIOS.Item
+          icon={require('./images/repo.png')}
           selected={this.state.selectedTab === 'repo'}
           onPress={() => this.setTab('repo')}
           title='Repositories'
@@ -40,6 +41,7 @@ export default class App extends React.Component {
           <Repository id={ID} />
         </TabBarIOS.Item>
         <TabBarIOS.Item
+          icon={require('./images/following.png')}
           selected={this.state.selectedTab === 'following'}
           onPress={() => this.setTab('following')}
           title='Following'
@@ -47,6 +49,7 @@ export default class App extends React.Component {
           <Following />
         </TabBarIOS.Item>
         <TabBarIOS.Item
+          icon={require('./images/followers.png')}
           selected={this.state.selectedTab === 'follower'}
           onPress={() => this.setTab('follower')}
           title='Followers'

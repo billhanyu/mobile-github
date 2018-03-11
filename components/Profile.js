@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableOpacity, Button, ScrollView } from 'react-native';
 import ID from '../constants/id';
 
 class Profile extends Component {
@@ -36,7 +36,6 @@ class Profile extends Component {
         followers: user.followers,
         following: user.following,
       });
-      console.log(user);
       // this.getFollowers(user.followers_url);
       // this.getFollowing(user.following_url);
     })
@@ -61,36 +60,71 @@ class Profile extends Component {
 
   render() {
     return (
-      <View>
-        <Image source={{uri: this.state.avatarUri}} style={{width: 200, height: 200}}>
-        </Image>
-        <Text>name: {this.state.name}</Text>
-        <Text>username: {this.state.username}</Text>
-        <Text>bio: {this.state.bio}</Text>
-        <Text>website: {this.state.website}</Text>
-        <Text>email: {this.state.email}</Text>
-        <Text>create date: {this.state.created_at}</Text>
-        <TouchableOpacity onPress={()=>this.props.setTab('repo')}>
-          <Text>Public Repos: {this.state.reposCount}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={()=>this.props.setTab('follower')}>
-          <Text># Followers: {this.state.followers}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={()=>this.props.setTab('following')}>
-          <Text># Following: {this.state.following}</Text>
-        </TouchableOpacity>
-      </View>
+      <ScrollView style={styles.container}>
+        <Text style={{textAlign: 'center', fontSize: 25, paddingTop: 40}}>{this.state.name}</Text>
+        <Text style={{textAlign: 'center', fontSize: 20, paddingTop: 20}}>{this.state.username}</Text>
+        <View style={styles.topHalf}>
+          <Image source={{uri: this.state.avatarUri}} style={{width: 150, height: 150}}>
+          </Image>
+          <View style={styles.topHalfTexts}>
+            <Text style={styles.bioTexts}>bio: {this.state.bio}</Text>
+            <Text style={styles.bioTexts}>{this.state.website}</Text>
+            <Text style={styles.bioTexts}>email: {this.state.email}</Text>
+            <Text style={styles.bioTexts}>Since {this.state.created_at.split('T')[0]}</Text>
+          </View>
+        </View>
+        <View style={styles.bottomHalf}>
+          <Button
+            onPress={()=>this.props.setTab('repo')}
+            style={styles.linkTexts}
+            title={`Public Repos: ${this.state.reposCount}`}
+          />
+          <Button
+            onPress={()=>this.props.setTab('follower')}
+            style={styles.linkTexts}
+            title={`# Followers: ${this.state.followers}`}>
+          </Button>
+          <Button
+            onPress={()=>this.props.setTab('following')}
+            style={styles.linkTexts}
+            title={`# Following: ${this.state.following}`}>
+          </Button>
+        </View>
+      </ScrollView>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
+    padding: 20,
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: 'column',
   },
+  topHalf: {
+    flex: 1,
+    flexDirection: 'row',
+    paddingTop: 20,
+  },
+  bottomHalf: {
+    flex: 1,
+    flexDirection: 'column',
+    paddingBottom: 100
+  },
+  topHalfTexts: {
+    paddingLeft: 40,
+    flex: 1,
+    flexDirection: 'column',
+  },
+  bioTexts: {
+    fontSize: 17,
+    paddingTop: 5,
+  },
+  linkTexts: {
+    fontSize: 17,
+    paddingTop: 10,
+    textAlign: 'center',
+  }
 });
 
 export default Profile;
