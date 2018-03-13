@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
 function mapStateToProps(state) {
   const { currentId, users } = state;
   return {
-    repos: users[currentId].repos,
+    repos: users[currentId] ? users[currentId].repos : [],
   };
 }
 
