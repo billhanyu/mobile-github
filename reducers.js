@@ -41,6 +41,9 @@ function users(state = {}, action) {
     case RECEIVE_FOLLOWING:
       userInfo.following = action.json.data;
       return newState;
+    case RECEIVE_FOLLOWERS:
+      userInfo.followers = action.json.data;
+      return newState;
     default:
       return state;
   }
@@ -52,13 +55,13 @@ function receiveUserInfo(json) {
   return Object.assign({}, user, {
     avatarUri: user.avatar_url,
     name: user.name,
-    username: ID,
+    username: user.login,
     bio: user.bio || 'N/A',
     website: user.blog,
     email: user.email || 'N/A',
     created_at: user.created_at,
     reposCount: user.public_repos,
-    followers: user.followers,
+    followersNum: user.followers,
     followingNum: user.following,
   });
 }

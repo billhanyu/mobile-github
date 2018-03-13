@@ -1,16 +1,11 @@
 import React, { Component } from 'react';
 import { View, Text, ListView, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
-import { requestRepos } from '../../actions';
 import RepositoryItem from './RepositoryItem';
 
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
-class Repository extends Component {  
-  componentDidMount() {
-    this.props.requestRepos();
-  }
-
+class Repository extends Component {
   render() {
     return (
       <ListView
@@ -39,10 +34,4 @@ function mapStateToProps(state) {
   };
 }
 
-function mapDispatchToProps(dispatch) {
-  return {
-    requestRepos: () => dispatch(requestRepos()),
-  };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Repository);
+export default connect(mapStateToProps)(Repository);

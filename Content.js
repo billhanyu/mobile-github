@@ -45,7 +45,7 @@ export default class App extends React.Component {
           onPress={() => this.setTab('following')}
           title='Following'
         >
-          <Following />
+          <Following setTab={this.setTab}/>
         </TabBarIOS.Item>
         <TabBarIOS.Item
           icon={require('./images/followers.png')}
@@ -53,7 +53,7 @@ export default class App extends React.Component {
           onPress={() => this.setTab('follower')}
           title='Followers'
         >
-          <Followers />
+          <Followers setTab={this.setTab}/>
         </TabBarIOS.Item>
       </TabBarIOS>
     );

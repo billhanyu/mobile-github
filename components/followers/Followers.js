@@ -1,31 +1,37 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { View, StyleSheet, Text, ListView } from 'react-native';
-import ID from '../../constants/id';
+import FollowingItem from '../following/FollowingItem';
+
+const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
 
 class Followers extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      followers: [],
-    };
-  }
-  
   render() {
     return (
-      <View style={styles.container}>
-        <Text>Followers</Text>
-      </View>
+      <ListView
+        dataSource={ds.cloneWithRows(this.props.followers || [])}
+        enableEmptySections={true}
+        renderRow={data => <FollowingItem data={data} setTab={this.props.setTab}></FollowingItem>}
+        renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
+      >
+      </ListView>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
+  separator: {
     flex: 1,
-    padding: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: '#8E8E8E',
   },
 });
 
-export default Followers;
+function mapStateToProps(state) {
+  const { currentId, users } = state;
+  return {
+    followers: users[currentId] ? users[currentId].followers : [],
+  };
+}
+
+export default connect(mapStateToProps)(Followers);

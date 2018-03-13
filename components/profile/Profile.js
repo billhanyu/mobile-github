@@ -32,7 +32,7 @@ class Profile extends Component {
           <Button
             onPress={()=>this.props.setTab('follower')}
             style={styles.linkTexts}
-            title={`# Followers: ${this.props.followers}`}>
+            title={`# Followers: ${this.props.followersNum}`}>
           </Button>
           <Button
             onPress={()=>this.props.setTab('following')}

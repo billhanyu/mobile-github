@@ -1,14 +1,17 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet, Linking, Image, TouchableOpacity } from 'react-native';
+import { Text, View, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import { connect } from 'react-redux';
+import { changeUser, requestUserInfo } from '../../actions';
 
 class FollowingItem extends Component {
   render() {
     const data = this.props.data;
-    console.log(data);
     return (
       <TouchableOpacity
         onPress={() => {
-          Linking.openURL(data.html_url).catch(err => console.error('An error occurred', err));
+          this.props.changeUser(data.login);
+          this.props.setTab('profile');
+          this.props.requestUserInfo();
         }}
       >
         <View style={styles.container}>
@@ -36,4 +39,15 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FollowingItem;
+function mapStateToProps(state) {
+  return {};
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    changeUser: (id) => dispatch(changeUser(id)),
+    requestUserInfo: () => dispatch(requestUserInfo()),
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(FollowingItem);

@@ -8,6 +8,10 @@ export const REQUEST_FOLLOWING = 'REQUEST_FOLLOWING';
 export const RECEIVE_FOLLOWING = 'RECEIVE_FOLLOWING';
 export const CHANGE_USER = 'CHANGE_USER';
 import axios from 'axios';
+import auth from './constants/auth';
+import qs from 'querystring';
+
+const authString = qs.stringify(auth);
 
 export function changeUser(id) {
   return {
@@ -19,10 +23,12 @@ export function changeUser(id) {
 export function requestUserInfo() {
   return (dispatch, getState) => {
     const id = getState().currentId;
-    axios.get(`https://api.github.com/users/${id}`)
+    axios.get(`https://api.github.com/users/${id}`, authString)
       .then(response => {
-        console.log(response.data);
         dispatch(receiveUserInfo(id, response));
+        dispatch(requestRepos());
+        dispatch(requestFollowers());
+        dispatch(requestFollowing());
       })
       .catch(err => console.log(err));
   };
@@ -39,7 +45,7 @@ export function receiveUserInfo(id, json) {
 export function requestRepos() {
   return (dispatch, getState) => {
     const id = getState().currentId;
-    axios.get(`https://api.github.com/users/${id}`)
+    axios.get(`https://api.github.com/users/${id}`, authString)
       .then(response => {
         const repos_url = response.data.repos_url;
         return axios.get(repos_url);
@@ -60,14 +66,22 @@ export function receiveRepos(id, json) {
 }
 
 export function requestFollowers() {
-  return {
-    type: REQUEST_FOLLOWERS,
-  };
+  return (dispatch, getState) => {
+    const state = getState();
+    const id = state.currentId;
+    let followersUrl = state.users[id].followers_url;
+    axios.get(followersUrl, authString)
+      .then(response => {
+        dispatch(receiveFollowers(id, response));
+      })
+      .catch(err => console.error(err));
+  }
 }
 
-export function receiveFollowers(json) {
+export function receiveFollowers(id, json) {
   return {
     type: RECEIVE_FOLLOWERS,
+    id,
     json,
   };
 }
@@ -78,7 +92,7 @@ export function requestFollowing() {
     const id = state.currentId;
     let followingUrl = state.users[id].following_url;
     followingUrl = followingUrl.substring(0, followingUrl.length - 13);
-    axios.get(followingUrl)
+    axios.get(followingUrl, authString)
       .then(response => {
         dispatch(receiveFollowing(id, response));
       })
