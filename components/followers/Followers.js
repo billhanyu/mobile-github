@@ -1,7 +1,15 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text, ListView } from 'react-native';
+import ID from '../../constants/id';
 
 class Followers extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      followers: [],
+    };
+  }
+  
   render() {
     return (
       <View style={styles.container}>

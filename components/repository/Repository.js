@@ -1,37 +1,20 @@
 import React, { Component } from 'react';
 import { View, Text, ListView, StyleSheet } from 'react-native';
-import axios from 'axios';
+import { connect } from 'react-redux';
+import { requestRepos } from '../../actions';
 import RepositoryItem from './RepositoryItem';
 
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
-class Repository extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      repos: ds.cloneWithRows([]),
-    };
-  }
-  
+class Repository extends Component {  
   componentDidMount() {
-    const id = this.props.id;
-    axios.get(`https://api.github.com/users/${id}`)
-    .then(response => {
-      const repos_url = response.data.repos_url;
-      return axios.get(repos_url);
-    })
-    .then(response => {
-      this.setState({
-        repos: ds.cloneWithRows(response.data),
-      });
-    })
-    .catch(err => console.error(err));
+    this.props.requestRepos();
   }
 
   render() {
     return (
       <ListView
-        dataSource={this.state.repos}
+        dataSource={ds.cloneWithRows(this.props.repos || [])}
         enableEmptySections={true}
         renderRow={data => <RepositoryItem data={data}></RepositoryItem>}
         renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
@@ -49,4 +32,17 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Repository;
+function mapStateToProps(state) {
+  const { currentId, users } = state;
+  return {
+    repos: users[currentId].repos,
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    requestRepos: () => dispatch(requestRepos()),
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Repository);
