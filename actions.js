@@ -25,7 +25,6 @@ export function requestUserInfo() {
     const id = getState().currentId;
     axios.get(`https://api.github.com/users/${id}`, params)
       .then(response => {
-        console.log('profile');
         dispatch(receiveUserInfo(id, response));
         dispatch(requestRepos());
         dispatch(requestFollowers());
