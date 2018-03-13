@@ -4,6 +4,7 @@ import Profile from './components/profile/Profile';
 import Repository from './components/repository/Repository';
 import Followers from './components/followers/Followers';
 import Following from './components/following/Following';
+import Me from './components/me/Me';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -54,6 +55,14 @@ export default class App extends React.Component {
           title='Followers'
         >
           <Followers setTab={this.setTab}/>
+        </TabBarIOS.Item>
+        <TabBarIOS.Item
+          icon={require('./images/followers.png')}
+          selected={this.state.selectedTab === 'me'}
+          onPress={() => this.setTab('me')}
+          title='Me'
+        >
+          <Me setTab={this.setTab} />
         </TabBarIOS.Item>
       </TabBarIOS>
     );

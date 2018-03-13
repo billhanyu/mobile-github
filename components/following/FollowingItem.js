@@ -18,7 +18,7 @@ class FollowingItem extends Component {
           <Image key={data.avatar_url} source={{ uri: data.avatar_url }} style={{ width: 80, height: 80 }}>
           </Image>
           <View style={styles.textContainer}>
-            <Text>{data.login}</Text>
+            <Text style={styles.text}>{data.login}</Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -36,6 +36,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingLeft: 30,
+  },
+  text: {
+    fontSize: 16,
   },
 });
 

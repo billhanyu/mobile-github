@@ -39,6 +39,14 @@ class Profile extends Component {
             style={styles.linkTexts}
             title={`# Following: ${this.props.followingNum}`}>
           </Button>
+          {
+            this.props.logout &&
+            <Button
+              onPress={this.props.logout}
+              style={styles.logout}
+              title='Log Out'
+            />
+          }
         </View>
       </ScrollView>
     );
@@ -74,6 +82,11 @@ const styles = StyleSheet.create({
     fontSize: 17,
     paddingTop: 10,
     textAlign: 'center',
+  },
+  logout: {
+    textAlign: 'center',
+    paddingTop: 30,
+    fontSize: 17,
   }
 });
 

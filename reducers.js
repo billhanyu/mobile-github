@@ -9,6 +9,10 @@ import {
   RECEIVE_FOLLOWERS,
   REQUEST_FOLLOWING,
   RECEIVE_FOLLOWING,
+  REQUEST_LOGIN,
+  RECEIVE_LOGIN,
+  LOGIN_ERROR,
+  LOGOUT,
 } from './actions';
 import ID from './constants/id';
 
@@ -49,6 +53,33 @@ function users(state = {}, action) {
   }
 }
 
+/* login: {
+ *   authEncode,
+ *   error,
+ *   data: {
+ *   }
+ * }
+ */
+function login(state = {}, action) {
+  const newState = Object.assign({}, state);
+  switch(action.type) {
+    case REQUEST_LOGIN:
+      newState.authEncode = action.authEncode;
+      newState.error = null;
+      return newState;
+    case RECEIVE_LOGIN:
+      newState.data = action.json.data;
+      return newState;
+    case LOGIN_ERROR:
+      newState.error = action.error;
+      return newState;
+    case LOGOUT:
+      return {};
+    default:
+      return state;
+  }
+}
+
 // handle user data from GitHub API
 function receiveUserInfo(json) {
   const user = json.data;
@@ -68,6 +99,7 @@ function receiveUserInfo(json) {
 
 const rootReducer = combineReducers({
   currentId,
+  login,
   users
 });
 

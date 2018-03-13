@@ -1,3 +1,8 @@
+import axios from 'axios';
+import auth from './constants/auth';
+import qs from 'querystring';
+import { Buffer } from 'buffer';
+
 export const REQUEST_USER = 'REQUEST_USER';
 export const RECEIVE_USER = 'RECEIVE_USER';
 export const REQUEST_REPOS = 'REQUESET_REPOS';
@@ -7,9 +12,10 @@ export const RECEIVE_FOLLOWERS = 'RECEIVE_FOLLOWERS';
 export const REQUEST_FOLLOWING = 'REQUEST_FOLLOWING';
 export const RECEIVE_FOLLOWING = 'RECEIVE_FOLLOWING';
 export const CHANGE_USER = 'CHANGE_USER';
-import axios from 'axios';
-import auth from './constants/auth';
-import qs from 'querystring';
+export const REQUEST_LOGIN = 'REQUEST_LOGIN';
+export const RECEIVE_LOGIN = 'RECEIVE_LOGIN';
+export const LOGIN_ERROR = 'LOGIN_ERROR';
+export const LOGOUT = 'LOGOUT';
 
 const params = { params: auth };
 
@@ -105,5 +111,47 @@ export function receiveFollowing(id, json) {
     type: RECEIVE_FOLLOWING,
     id,
     json,
+  };
+}
+
+export function requestLogin(username, password) {
+  return (dispatch, getState) => {
+    const authEncode = Buffer.from(`${username}:${password}`).toString('base64');
+    dispatch({
+      type: REQUEST_LOGIN,
+      authEncode,
+    });
+    axios.get('https://api.github.com/user', {
+      headers: { Authorization: "Basic " + authEncode}
+    })
+    .then(response => {
+      console.log(response.data);
+      dispatch(changeUser(username));
+      dispatch(requestUserInfo());
+      dispatch(receiveLogin(response));
+    })
+    .catch(err => {
+      dispatch(loginError(err));
+    });
+  }
+}
+
+export function receiveLogin(json) {
+  return {
+    type: RECEIVE_LOGIN,
+    json,
+  };
+}
+
+export function loginError(error) {
+  return {
+    type: LOGIN_ERROR,
+    error,
+  };
+}
+
+export function logout() {
+  return {
+    type: LOGOUT,
   };
 }
