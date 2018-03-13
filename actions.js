@@ -11,7 +11,7 @@ import axios from 'axios';
 import auth from './constants/auth';
 import qs from 'querystring';
 
-const authString = qs.stringify(auth);
+const params = { params: auth };
 
 export function changeUser(id) {
   return {
@@ -23,8 +23,9 @@ export function changeUser(id) {
 export function requestUserInfo() {
   return (dispatch, getState) => {
     const id = getState().currentId;
-    axios.get(`https://api.github.com/users/${id}`, authString)
+    axios.get(`https://api.github.com/users/${id}`, params)
       .then(response => {
+        console.log('profile');
         dispatch(receiveUserInfo(id, response));
         dispatch(requestRepos());
         dispatch(requestFollowers());
@@ -45,10 +46,10 @@ export function receiveUserInfo(id, json) {
 export function requestRepos() {
   return (dispatch, getState) => {
     const id = getState().currentId;
-    axios.get(`https://api.github.com/users/${id}`, authString)
+    axios.get(`https://api.github.com/users/${id}`, params)
       .then(response => {
         const repos_url = response.data.repos_url;
-        return axios.get(repos_url);
+        return axios.get(repos_url, params);
       })
       .then(response => {
         dispatch(receiveRepos(id, response));
@@ -70,7 +71,7 @@ export function requestFollowers() {
     const state = getState();
     const id = state.currentId;
     let followersUrl = state.users[id].followers_url;
-    axios.get(followersUrl, authString)
+    axios.get(followersUrl, params)
       .then(response => {
         dispatch(receiveFollowers(id, response));
       })
@@ -92,7 +93,7 @@ export function requestFollowing() {
     const id = state.currentId;
     let followingUrl = state.users[id].following_url;
     followingUrl = followingUrl.substring(0, followingUrl.length - 13);
-    axios.get(followingUrl, authString)
+    axios.get(followingUrl, params)
       .then(response => {
         dispatch(receiveFollowing(id, response));
       })
