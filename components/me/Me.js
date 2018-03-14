@@ -62,7 +62,7 @@ class Me extends Component {
         </ScrollView>
       </TouchableWithoutFeedback>
     
-    const profile = <Profile setTab={this.props.setTab} logout={this.props.logout} />
+    const profile = <Profile setTab={this.props.setTab} logout={this.props.logout} mode="me" />
 
     return this.props.data ? profile : login;
   }

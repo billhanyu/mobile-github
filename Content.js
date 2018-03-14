@@ -30,7 +30,7 @@ export default class App extends React.Component {
           onPress={() => this.setTab('profile')}
           title='Profile'
         >
-          <Profile setTab={this.setTab} />
+          <Profile setTab={this.setTab} mode="current"/>
         </TabBarIOS.Item>
         <TabBarIOS.Item
           icon={require('./images/repo.png')}

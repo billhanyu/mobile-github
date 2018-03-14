@@ -125,7 +125,6 @@ export function requestLogin(username, password) {
       headers: { Authorization: "Basic " + authEncode}
     })
     .then(response => {
-      console.log(response.data);
       dispatch(changeUser(username));
       dispatch(requestUserInfo());
       dispatch(receiveLogin(response));

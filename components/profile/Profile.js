@@ -9,35 +9,48 @@ class Profile extends Component {
   }
 
   render() {
+    const data = this.props.mode == "current" ? this.props.current : this.props.login;
+    const {
+      name,
+      username,
+      avatarUri,
+      bio,
+      website,
+      email,
+      created_at,
+      reposCount,
+      followersNum,
+      followingNum
+    } = data;
     return (
       <ScrollView style={styles.container}>
-        <Text style={{textAlign: 'center', fontSize: 25, paddingTop: 40}}>{this.props.name}</Text>
-        <Text style={{textAlign: 'center', fontSize: 20, paddingTop: 20}}>{this.props.username}</Text>
+        <Text style={{textAlign: 'center', fontSize: 25, paddingTop: 40}}>{name}</Text>
+        <Text style={{textAlign: 'center', fontSize: 20, paddingTop: 20}}>{username}</Text>
         <View style={styles.topHalf}>
-          <Image key={this.props.avatarUri} source={{uri: this.props.avatarUri}} style={{width: 150, height: 150}}>
+          <Image key={avatarUri} source={{uri: avatarUri}} style={{width: 150, height: 150}}>
           </Image>
           <View style={styles.topHalfTexts}>
-            <Text style={styles.bioTexts}>bio: {this.props.bio}</Text>
-            <Text style={styles.bioTexts}>{this.props.website}</Text>
-            <Text style={styles.bioTexts}>email: {this.props.email}</Text>
-            <Text style={styles.bioTexts}>Since {this.props.created_at ? this.props.created_at.split('T')[0] : ''}</Text>
+            <Text style={styles.bioTexts}>bio: {bio}</Text>
+            <Text style={styles.bioTexts}>{website}</Text>
+            <Text style={styles.bioTexts}>email: {email}</Text>
+            <Text style={styles.bioTexts}>Since {created_at ? created_at.split('T')[0] : ''}</Text>
           </View>
         </View>
         <View style={styles.bottomHalf}>
           <Button
             onPress={()=>this.props.setTab('repo')}
             style={styles.linkTexts}
-            title={`Public Repos: ${this.props.reposCount}`}
+            title={`Public Repos: ${reposCount}`}
           />
           <Button
             onPress={()=>this.props.setTab('follower')}
             style={styles.linkTexts}
-            title={`# Followers: ${this.props.followersNum}`}>
+            title={`# Followers: ${followersNum}`}>
           </Button>
           <Button
             onPress={()=>this.props.setTab('following')}
             style={styles.linkTexts}
-            title={`# Following: ${this.props.followingNum}`}>
+            title={`# Following: ${followingNum}`}>
           </Button>
           {
             this.props.logout &&
@@ -91,8 +104,11 @@ const styles = StyleSheet.create({
 });
 
 function mapStateToProps(state) {
-  const { currentId, users } = state;
-  return {...users[currentId]};
+  const { currentId, users, login } = state;
+  return {
+    current: {...users[currentId]},
+    login: {...login.data},
+  };
 }
 
 function mapDispatchToProps(dispatch) {

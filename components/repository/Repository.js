@@ -7,9 +7,10 @@ const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
 class Repository extends Component {
   render() {
+    const rows = !this.props.repos || !this.props.repos.length ? ['None'] : this.props.repos;
     return (
       <ListView
-        dataSource={ds.cloneWithRows(this.props.repos || [])}
+        dataSource={ds.cloneWithRows(rows)}
         enableEmptySections={true}
         renderRow={data => <RepositoryItem data={data}></RepositoryItem>}
         renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}

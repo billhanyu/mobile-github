@@ -68,7 +68,7 @@ function login(state = {}, action) {
       newState.error = null;
       return newState;
     case RECEIVE_LOGIN:
-      newState.data = action.json.data;
+      newState.data = receiveUserInfo(action.json);
       return newState;
     case LOGIN_ERROR:
       newState.error = action.error;

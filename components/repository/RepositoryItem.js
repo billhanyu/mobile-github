@@ -4,10 +4,21 @@ import { Text, View, StyleSheet, Linking, TouchableOpacity } from 'react-native'
 class RepositoryItem extends Component {
   render() {
     const data = this.props.data;
-    const ownerUrl = data.owner.url;
-    const arr = ownerUrl.split('/');
-    const ownerUsername = arr[arr.length-1];
+    let ownerUrl, arr, ownerUsername;
+    if (data !== 'None') {
+      ownerUrl = data.owner.url;
+      arr = ownerUrl.split('/');
+      ownerUsername = arr[arr.length-1];
+    }
     return (
+      data == 'None'
+      ?
+      <View style={styles.container}>
+        <Text style={styles.text}>
+          None
+        </Text>
+      </View>
+      :
       <TouchableOpacity
         onPress={() => {
           Linking.openURL(data.html_url).catch(err => console.error('An error occurred', err));

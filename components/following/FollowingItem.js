@@ -7,6 +7,12 @@ class FollowingItem extends Component {
   render() {
     const data = this.props.data;
     return (
+      data == 'None'
+      ?
+      <View style = { styles.container } >
+        <Text style={styles.noneText}>None</Text>
+      </View >
+      :
       <TouchableOpacity
         onPress={() => {
           this.props.changeUser(data.login);
@@ -38,6 +44,10 @@ const styles = StyleSheet.create({
     paddingLeft: 30,
   },
   text: {
+    fontSize: 16,
+  },
+  noneText: {
+    textAlign: 'center',
     fontSize: 16,
   },
 });

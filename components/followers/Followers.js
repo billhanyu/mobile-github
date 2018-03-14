@@ -7,9 +7,10 @@ const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
 
 class Followers extends Component {
   render() {
+    const rows = !this.props.followers || !this.props.followers.length ? ['None'] : this.props.followers;
     return (
       <ListView
-        dataSource={ds.cloneWithRows(this.props.followers || [])}
+        dataSource={ds.cloneWithRows(rows)}
         enableEmptySections={true}
         renderRow={data => <FollowingItem data={data} setTab={this.props.setTab}></FollowingItem>}
         renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
