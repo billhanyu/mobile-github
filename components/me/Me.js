@@ -64,7 +64,7 @@ class Me extends Component {
     
     const profile = <Profile setTab={this.props.setTab} logout={this.props.logout} mode="me" />
 
-    return this.props.data ? profile : login;
+    return this.props.id ? profile : login;
   }
 }
 

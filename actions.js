@@ -16,6 +16,12 @@ export const REQUEST_LOGIN = 'REQUEST_LOGIN';
 export const RECEIVE_LOGIN = 'RECEIVE_LOGIN';
 export const LOGIN_ERROR = 'LOGIN_ERROR';
 export const LOGOUT = 'LOGOUT';
+export const FOLLOW = 'FOLLOW';
+export const UNFOLLOW = 'UNFOLLOW';
+export const STAR = 'STAR';
+export const UNSTAR = 'UNSTAR';
+export const DISPLAY_CURRENT = 'DISPLAY_CURRENT';
+export const DISPLAY_LOGIN = 'DISPLAY_LOGIN';
 
 const params = { params: auth };
 
@@ -26,17 +32,23 @@ export function changeUser(id) {
   };
 }
 
-export function requestUserInfo() {
+function requestUserInfo(id) {
   return (dispatch, getState) => {
-    const id = getState().currentId;
     axios.get(`https://api.github.com/users/${id}`, params)
       .then(response => {
         dispatch(receiveUserInfo(id, response));
-        dispatch(requestRepos());
-        dispatch(requestFollowers());
-        dispatch(requestFollowing());
+        dispatch(requestRepos(id));
+        dispatch(requestFollowers(id));
+        dispatch(requestFollowing(id));
       })
       .catch(err => console.log(err));
+  };
+}
+
+export function requestCurrentUserInfo() {
+  return (dispatch, getState) => {
+    const id = getState().currentId;
+    dispatch(requestUserInfo(id));
   };
 }
 
@@ -48,9 +60,8 @@ export function receiveUserInfo(id, json) {
   };
 }
 
-export function requestRepos() {
+export function requestRepos(id) {
   return (dispatch, getState) => {
-    const id = getState().currentId;
     axios.get(`https://api.github.com/users/${id}`, params)
       .then(response => {
         const repos_url = response.data.repos_url;
@@ -71,10 +82,9 @@ export function receiveRepos(id, json) {
   };
 }
 
-export function requestFollowers() {
+export function requestFollowers(id) {
   return (dispatch, getState) => {
     const state = getState();
-    const id = state.currentId;
     let followersUrl = state.users[id].followers_url;
     axios.get(followersUrl, params)
       .then(response => {
@@ -92,7 +102,7 @@ export function receiveFollowers(id, json) {
   };
 }
 
-export function requestFollowing() {
+export function requestFollowing(id) {
   return (dispatch, getState) => {
     const state = getState();
     const id = state.currentId;
@@ -126,8 +136,8 @@ export function requestLogin(username, password) {
     })
     .then(response => {
       dispatch(changeUser(username));
-      dispatch(requestUserInfo());
-      dispatch(receiveLogin(response));
+      dispatch(requestUserInfo(username));
+      dispatch(receiveLogin(username, response));
     })
     .catch(err => {
       dispatch(loginError(err));
@@ -135,9 +145,10 @@ export function requestLogin(username, password) {
   }
 }
 
-export function receiveLogin(json) {
+export function receiveLogin(id, json) {
   return {
     type: RECEIVE_LOGIN,
+    id,
     json,
   };
 }
@@ -153,4 +164,71 @@ export function logout() {
   return {
     type: LOGOUT,
   };
+}
+
+export function follow(id) {
+  return (dispatch, getState) => {
+    const state = getState();
+    const authEncode = state.login.authEncode;
+    axios.put(`https://api.github.com/user/following/${id}`, {
+      headers: {
+        Authorization: "Basic " + authEncode,
+        'Content-Length': 0,
+      }
+    })
+    .then(response => {
+      console.log(response);
+      dispatch(requestUserInfo(state.login.id));
+    })
+    .catch(err => {
+      console.log(err.response);
+    });
+  }
+}
+
+export function unfollow(id) {
+  return (dispatch, getState) => {
+    const state = getState();
+    const authEncode = state.login.authEncode;
+    axios.delete(`https://api.github.com/user/following/${id}`, {
+      headers: {
+        Authorization: "Basic " + authEncode,
+      }
+    })
+      .then(response => {
+        console.log(response);
+        dispatch(requestUserInfo(state.login.id));
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+}
+
+export function star(username, reponame) {
+  return {
+    type: STAR,
+    username,
+    reponame,
+  };
+}
+
+export function unstar(username, reponame) {
+  return {
+    type: UNSTAR,
+    username,
+    reponame,
+  };
+}
+
+export function displayCurrent() {
+  return {
+    type: DISPLAY_CURRENT,
+  }
+}
+
+export function displayLogin() {
+  return {
+    type: DISPLAY_LOGIN,
+  }
 }

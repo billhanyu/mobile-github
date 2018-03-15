@@ -57,7 +57,7 @@ export default class App extends React.Component {
           <Followers setTab={this.setTab}/>
         </TabBarIOS.Item>
         <TabBarIOS.Item
-          icon={require('./images/followers.png')}
+          icon={require('./images/me.png')}
           selected={this.state.selectedTab === 'me'}
           onPress={() => this.setTab('me')}
           title='Me'

@@ -1,15 +1,47 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
-import { requestUserInfo } from '../../actions';
+import { requestCurrentUserInfo, follow, unfollow, displayCurrent, displayLogin } from '../../actions';
 import { StyleSheet, Text, View, Image, TouchableOpacity, Button, ScrollView } from 'react-native';
 
 class Profile extends Component {
+  constructor(props) {
+    super(props);
+    this.onClickChangePage = this.onClickChangePage.bind(this);
+  }
+
   componentDidMount() {
-    this.props.requestUserInfo();
+    this.props.requestCurrentUserInfo();
+  }
+
+  getFollowStatus() {
+    let followable = false;
+    let unfollowable = false;
+    const loginProfile = this.props.loginProfile;
+    if (this.props.mode == 'current'
+      && loginProfile
+      && this.props.currentId !== this.props.loginId) {
+      if (!loginProfile.following.filter(user => user.login == this.props.currentId).length) {
+        followable = true;
+      } else {
+        unfollowable = true;
+      }
+    }
+    return {
+      followable,
+      unfollowable,
+    };
+  }
+
+  onClickChangePage() {
+    if (this.props.mode == 'current') {
+      this.props.displayCurrent();
+    } else {
+      this.props.displayLogin();
+    }
   }
 
   render() {
-    const data = this.props.mode == "current" ? this.props.current : this.props.login;
+    const data = this.props.mode == 'current' ? this.props.current : this.props.login;
     const {
       name,
       username,
@@ -22,6 +54,8 @@ class Profile extends Component {
       followersNum,
       followingNum
     } = data;
+    const { followable, unfollowable } = this.getFollowStatus();
+
     return (
       <ScrollView style={styles.container}>
         <Text style={{textAlign: 'center', fontSize: 25, paddingTop: 40}}>{name}</Text>
@@ -38,17 +72,26 @@ class Profile extends Component {
         </View>
         <View style={styles.bottomHalf}>
           <Button
-            onPress={()=>this.props.setTab('repo')}
+            onPress={()=>{
+              this.onClickChangePage();
+              this.props.setTab('repo');
+            }}
             style={styles.linkTexts}
             title={`Public Repos: ${reposCount}`}
           />
           <Button
-            onPress={()=>this.props.setTab('follower')}
+            onPress={() => {
+              this.onClickChangePage();
+              this.props.setTab('follower');
+            }}
             style={styles.linkTexts}
             title={`# Followers: ${followersNum}`}>
           </Button>
           <Button
-            onPress={()=>this.props.setTab('following')}
+            onPress={() => {
+              this.onClickChangePage();
+              this.props.setTab('following');
+            }}
             style={styles.linkTexts}
             title={`# Following: ${followingNum}`}>
           </Button>
@@ -58,6 +101,22 @@ class Profile extends Component {
               onPress={this.props.logout}
               style={styles.logout}
               title='Log Out'
+            />
+          }
+          {
+            followable &&
+            <Button
+              onPress={e=>this.props.follow(this.props.currentId)}
+              style={styles.logout}
+              title='Follow'
+            />
+          }
+          {
+            unfollowable &&
+            <Button
+              onPress={e=>this.props.unfollow(this.props.currentId)}
+              style={styles.logout}
+              title='Unfollow'
             />
           }
         </View>
@@ -105,15 +164,27 @@ const styles = StyleSheet.create({
 
 function mapStateToProps(state) {
   const { currentId, users, login } = state;
+  const loginId = login.id;
+  let loginProfile;
+  if (loginId) {
+    loginProfile = users[login.id];
+  }
   return {
+    currentId,
+    loginId,
     current: {...users[currentId]},
-    login: {...login.data},
+    login: {...users[login.id]},
+    loginProfile,
   };
 }
 
 function mapDispatchToProps(dispatch) {
   return ({
-    requestUserInfo: () => dispatch(requestUserInfo()),
+    requestCurrentUserInfo: () => dispatch(requestCurrentUserInfo()),
+    follow: (id) => dispatch(follow(id)),
+    unfollow: (id) => dispatch(unfollow(id)),
+    displayCurrent: () => dispatch(displayCurrent()),
+    displayLogin: () => dispatch(displayLogin()),
   });
 }
 

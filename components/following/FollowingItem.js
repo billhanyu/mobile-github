@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Text, View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
-import { changeUser, requestUserInfo } from '../../actions';
+import { changeUser, requestCurrentUserInfo } from '../../actions';
 
 class FollowingItem extends Component {
   render() {
@@ -17,7 +17,7 @@ class FollowingItem extends Component {
         onPress={() => {
           this.props.changeUser(data.login);
           this.props.setTab('profile');
-          this.props.requestUserInfo();
+          this.props.requestCurrentUserInfo();
         }}
       >
         <View style={styles.container}>
@@ -59,7 +59,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     changeUser: (id) => dispatch(changeUser(id)),
-    requestUserInfo: () => dispatch(requestUserInfo()),
+    requestCurrentUserInfo: () => dispatch(requestCurrentUserInfo()),
   };
 }
 

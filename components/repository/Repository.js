@@ -29,9 +29,11 @@ const styles = StyleSheet.create({
 });
 
 function mapStateToProps(state) {
-  const { currentId, users } = state;
+  const { currentId, users, display, login } = state;
+  const currentRepos = users[currentId] ? users[currentId].repos : [];
+  const loginRepos = users[login.id] ? users[login.id].repos : [];
   return {
-    repos: users[currentId] ? users[currentId].repos : [],
+    repos: display == 'current' ? currentRepos : loginRepos,
   };
 }
 

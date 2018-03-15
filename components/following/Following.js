@@ -29,9 +29,11 @@ const styles = StyleSheet.create({
 });
 
 function mapStateToProps(state) {
-  const { currentId, users } = state;
+  const { currentId, users, display, login } = state;
+  const currentFollowing = users[currentId] ? users[currentId].following : [];
+  const loginFollowing = users[login.id] ? users[login.id].following : [];
   return {
-    following: users[currentId] ? users[currentId].following : [],
+    following: display == 'current' ? currentFollowing : loginFollowing,
   };
 }
 

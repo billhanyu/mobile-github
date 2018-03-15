@@ -13,6 +13,8 @@ import {
   RECEIVE_LOGIN,
   LOGIN_ERROR,
   LOGOUT,
+  DISPLAY_CURRENT,
+  DISPLAY_LOGIN,
 } from './actions';
 import ID from './constants/id';
 
@@ -34,9 +36,11 @@ function currentId(state = ID, action) {
  */
 function users(state = {}, action) {
   const newState = Object.assign({}, state);
+  newState[action.id] = Object.assign({}, newState[action.id]);
   const userInfo = newState[action.id];
   switch(action.type) {
     case RECEIVE_USER:
+    case RECEIVE_LOGIN:
       newState[action.id] = receiveUserInfo(action.json);
       return newState;
     case RECEIVE_REPOS:
@@ -54,10 +58,9 @@ function users(state = {}, action) {
 }
 
 /* login: {
+ *   id,
  *   authEncode,
  *   error,
- *   data: {
- *   }
  * }
  */
 function login(state = {}, action) {
@@ -68,13 +71,24 @@ function login(state = {}, action) {
       newState.error = null;
       return newState;
     case RECEIVE_LOGIN:
-      newState.data = receiveUserInfo(action.json);
+      newState.id = action.id;
       return newState;
     case LOGIN_ERROR:
       newState.error = action.error;
       return newState;
     case LOGOUT:
       return {};
+    default:
+      return state;
+  }
+}
+
+function display(state='current', action) {
+  switch(action.type) {
+    case DISPLAY_CURRENT:
+      return 'current';
+    case DISPLAY_LOGIN:
+      return 'login';
     default:
       return state;
   }
@@ -94,13 +108,16 @@ function receiveUserInfo(json) {
     reposCount: user.public_repos,
     followersNum: user.followers,
     followingNum: user.following,
+    following: [],
+    followers: [],
   });
 }
 
 const rootReducer = combineReducers({
   currentId,
   login,
-  users
+  users,
+  display,
 });
 
 export default rootReducer;

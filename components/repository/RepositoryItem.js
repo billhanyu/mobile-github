@@ -14,7 +14,7 @@ class RepositoryItem extends Component {
       data == 'None'
       ?
       <View style={styles.container}>
-        <Text style={styles.text}>
+        <Text style={styles.noneText}>
           None
         </Text>
       </View>
@@ -53,7 +53,10 @@ const styles = StyleSheet.create({
   gen: {
     flex: 1,
     flexDirection: 'row'
-  }
+  },
+  noneText: {
+    fontSize: 16,
+  },
 });
 
 export default RepositoryItem;
