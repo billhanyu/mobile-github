@@ -15,7 +15,7 @@ class Me extends Component {
     this.onChangePassword = this.onChangePassword.bind(this);
     this.login = this.login.bind(this);
   }
-  
+
   onChangeUsername(username) {
     this.setState({
       username,
@@ -97,8 +97,7 @@ const styles = StyleSheet.create({
 });
 
 function mapStateToProps(state) {
-  const { currentId, users, login } = state;
-  return {...login};
+  return {...state.login};
 }
 
 function mapDispatchToProps(dispatch) {

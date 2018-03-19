@@ -11,7 +11,7 @@ class Root extends Component {
       <Provider store={store}>
         <Content />
       </Provider>
-    )
+    );
   }
 }
 

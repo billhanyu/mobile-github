@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet, Linking, TouchableOpacity } from 'react-native';
+import { Text, View, StyleSheet, Linking, TouchableOpacity, Button } from 'react-native';
+import { star, unstar } from '../../actions';
+import { connect } from 'react-redux';
 
 class RepositoryItem extends Component {
   render() {
     const data = this.props.data;
-    let ownerUrl, arr, ownerUsername;
+    let ownerUrl;
+    let arr;
+    let ownerUsername;
     if (data !== 'None') {
       ownerUrl = data.owner.url;
       arr = ownerUrl.split('/');
@@ -30,6 +34,14 @@ class RepositoryItem extends Component {
             <Text style={styles.text}>{ownerUsername}</Text>
           </View>
           <Text style={styles.text}>{data.description}</Text>
+          <Button
+            onPress={()=>this.props.star(data.owner.login, data.name)}
+            title='star'
+          />
+          <Button
+            onPress={()=>this.props.unstar(data.owner.login, data.name)}
+            title='unstar'
+          />
         </View>
       </TouchableOpacity>
     );
@@ -52,11 +64,22 @@ const styles = StyleSheet.create({
   },
   gen: {
     flex: 1,
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   noneText: {
     fontSize: 16,
   },
 });
 
-export default RepositoryItem;
+function mapStateToProps(state) {
+  return {};
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    star: (username, reponame) => dispatch(star(username, reponame)),
+    unstar: (username, reponame) => dispatch(unstar(username, reponame)),
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(RepositoryItem);

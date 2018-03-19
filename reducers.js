@@ -1,13 +1,9 @@
 import { combineReducers } from 'redux';
 import {
   CHANGE_USER,
-  REQUEST_USER,
   RECEIVE_USER,
-  REQUEST_REPOS,
   RECEIVE_REPOS,
-  REQUEST_FOLLOWERS,
   RECEIVE_FOLLOWERS,
-  REQUEST_FOLLOWING,
   RECEIVE_FOLLOWING,
   REQUEST_LOGIN,
   RECEIVE_LOGIN,
@@ -15,12 +11,14 @@ import {
   LOGOUT,
   DISPLAY_CURRENT,
   DISPLAY_LOGIN,
+  FOLLOW,
+  UNFOLLOW,
 } from './actions';
 import ID from './constants/id';
 
 // id is the current viewing user's GitHub username in app
 function currentId(state = ID, action) {
-  switch(action.type) {
+  switch (action.type) {
     case CHANGE_USER:
       return action.id;
     default:
@@ -38,7 +36,7 @@ function users(state = {}, action) {
   const newState = Object.assign({}, state);
   newState[action.id] = Object.assign({}, newState[action.id]);
   const userInfo = newState[action.id];
-  switch(action.type) {
+  switch (action.type) {
     case RECEIVE_USER:
     case RECEIVE_LOGIN:
       newState[action.id] = receiveUserInfo(action.json);
@@ -51,6 +49,22 @@ function users(state = {}, action) {
       return newState;
     case RECEIVE_FOLLOWERS:
       userInfo.followers = action.json.data;
+      return newState;
+    case FOLLOW:
+      let following = newState[action.login].following;
+      following.push({login: action.id});
+      return newState;
+    case UNFOLLOW:
+      following = newState[action.login].following;
+      let index = -1;
+      following.forEach((element, idx) => {
+        if (element.login == action.id) {
+          index = idx;
+        }
+      });
+      if (index > -1) {
+        newState[action.login].following = following.splice(index, 1);
+      }
       return newState;
     default:
       return state;
@@ -65,7 +79,7 @@ function users(state = {}, action) {
  */
 function login(state = {}, action) {
   const newState = Object.assign({}, state);
-  switch(action.type) {
+  switch (action.type) {
     case REQUEST_LOGIN:
       newState.authEncode = action.authEncode;
       newState.error = null;
@@ -84,7 +98,7 @@ function login(state = {}, action) {
 }
 
 function display(state='current', action) {
-  switch(action.type) {
+  switch (action.type) {
     case DISPLAY_CURRENT:
       return 'current';
     case DISPLAY_LOGIN:

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux'
+import { connect } from 'react-redux';
 import { requestCurrentUserInfo, follow, unfollow, displayCurrent, displayLogin } from '../../actions';
 import { StyleSheet, Text, View, Image, TouchableOpacity, Button, ScrollView } from 'react-native';
 
@@ -7,29 +7,38 @@ class Profile extends Component {
   constructor(props) {
     super(props);
     this.onClickChangePage = this.onClickChangePage.bind(this);
+    this.follow = this.follow.bind(this);
+    this.unfollow = this.unfollow.bind(this);
+    this.state = {
+      followable: false,
+      unfollowable: false,
+    };
   }
 
   componentDidMount() {
     this.props.requestCurrentUserInfo();
   }
 
-  getFollowStatus() {
+  componentWillReceiveProps(nextProps) {
     let followable = false;
     let unfollowable = false;
-    const loginProfile = this.props.loginProfile;
-    if (this.props.mode == 'current'
+    const loginProfile = nextProps.loginProfile;
+    if (nextProps.mode == 'current'
       && loginProfile
-      && this.props.currentId !== this.props.loginId) {
-      if (!loginProfile.following.filter(user => user.login == this.props.currentId).length) {
-        followable = true;
+      && nextProps.currentId !== nextProps.loginId
+      && nextProps.currentId !== this.props.currentId) {
+      if (!loginProfile.following.filter(user => user.login == nextProps.currentId).length) {
+        this.setState({
+          followable: true,
+          unfollowable: false,
+        });
       } else {
-        unfollowable = true;
+        this.setState({
+          followable: false,
+          unfollowable: true,
+        });
       }
     }
-    return {
-      followable,
-      unfollowable,
-    };
   }
 
   onClickChangePage() {
@@ -38,6 +47,22 @@ class Profile extends Component {
     } else {
       this.props.displayLogin();
     }
+  }
+
+  follow(id) {
+    this.setState({
+      followable: false,
+      unfollowable: true,
+    });
+    this.props.follow(id);
+  }
+
+  unfollow(id) {
+    this.setState({
+      followable: true,
+      unfollowable: false,
+    });
+    this.props.unfollow(id);
   }
 
   render() {
@@ -49,12 +74,11 @@ class Profile extends Component {
       bio,
       website,
       email,
-      created_at,
+      createdAt,
       reposCount,
       followersNum,
-      followingNum
+      followingNum,
     } = data;
-    const { followable, unfollowable } = this.getFollowStatus();
 
     return (
       <ScrollView style={styles.container}>
@@ -67,7 +91,7 @@ class Profile extends Component {
             <Text style={styles.bioTexts}>bio: {bio}</Text>
             <Text style={styles.bioTexts}>{website}</Text>
             <Text style={styles.bioTexts}>email: {email}</Text>
-            <Text style={styles.bioTexts}>Since {created_at ? created_at.split('T')[0] : ''}</Text>
+            <Text style={styles.bioTexts}>Since {createdAt ? createdAt.split('T')[0] : ''}</Text>
           </View>
         </View>
         <View style={styles.bottomHalf}>
@@ -104,17 +128,17 @@ class Profile extends Component {
             />
           }
           {
-            followable &&
+            this.state.followable &&
             <Button
-              onPress={e=>this.props.follow(this.props.currentId)}
+              onPress={e=>this.follow(this.props.currentId)}
               style={styles.logout}
               title='Follow'
             />
           }
           {
-            unfollowable &&
+            this.state.unfollowable &&
             <Button
-              onPress={e=>this.props.unfollow(this.props.currentId)}
+              onPress={e=>this.unfollow(this.props.currentId)}
               style={styles.logout}
               title='Unfollow'
             />
@@ -139,7 +163,7 @@ const styles = StyleSheet.create({
   bottomHalf: {
     flex: 1,
     flexDirection: 'column',
-    paddingBottom: 100
+    paddingBottom: 100,
   },
   topHalfTexts: {
     paddingLeft: 40,
@@ -159,7 +183,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     paddingTop: 30,
     fontSize: 17,
-  }
+  },
 });
 
 function mapStateToProps(state) {
@@ -167,13 +191,13 @@ function mapStateToProps(state) {
   const loginId = login.id;
   let loginProfile;
   if (loginId) {
-    loginProfile = users[login.id];
+    loginProfile = users[loginId];
   }
   return {
     currentId,
     loginId,
     current: {...users[currentId]},
-    login: {...users[login.id]},
+    login: { ...users[loginId]},
     loginProfile,
   };
 }

@@ -1,6 +1,5 @@
 import axios from 'axios';
 import auth from './constants/auth';
-import qs from 'querystring';
 import { Buffer } from 'buffer';
 
 export const REQUEST_USER = 'REQUEST_USER';
@@ -22,6 +21,8 @@ export const STAR = 'STAR';
 export const UNSTAR = 'UNSTAR';
 export const DISPLAY_CURRENT = 'DISPLAY_CURRENT';
 export const DISPLAY_LOGIN = 'DISPLAY_LOGIN';
+export const STAR_REPO = 'STAR_REPO';
+export const UNSTAR_REPO = 'UNSTAR_REPO';
 
 const params = { params: auth };
 
@@ -64,14 +65,14 @@ export function requestRepos(id) {
   return (dispatch, getState) => {
     axios.get(`https://api.github.com/users/${id}`, params)
       .then(response => {
-        const repos_url = response.data.repos_url;
-        return axios.get(repos_url, params);
+        const reposUrl = response.data.repos_url;
+        return axios.get(reposUrl, params);
       })
       .then(response => {
         dispatch(receiveRepos(id, response));
       })
       .catch(err => console.error(err));
-  }
+  };
 }
 
 export function receiveRepos(id, json) {
@@ -91,7 +92,7 @@ export function requestFollowers(id) {
         dispatch(receiveFollowers(id, response));
       })
       .catch(err => console.error(err));
-  }
+  };
 }
 
 export function receiveFollowers(id, json) {
@@ -113,7 +114,7 @@ export function requestFollowing(id) {
         dispatch(receiveFollowing(id, response));
       })
       .catch(err => console.error(err));
-  }
+  };
 }
 
 export function receiveFollowing(id, json) {
@@ -132,7 +133,7 @@ export function requestLogin(username, password) {
       authEncode,
     });
     axios.get('https://api.github.com/user', {
-      headers: { Authorization: "Basic " + authEncode}
+      headers: { Authorization: 'Basic ' + authEncode},
     })
     .then(response => {
       dispatch(changeUser(username));
@@ -142,7 +143,7 @@ export function requestLogin(username, password) {
     .catch(err => {
       dispatch(loginError(err));
     });
-  }
+  };
 }
 
 export function receiveLogin(id, json) {
@@ -170,20 +171,23 @@ export function follow(id) {
   return (dispatch, getState) => {
     const state = getState();
     const authEncode = state.login.authEncode;
-    axios.put(`https://api.github.com/user/following/${id}`, {
+    axios.put(`https://api.github.com/user/following/${id}`, '', {
       headers: {
-        Authorization: "Basic " + authEncode,
+        'Authorization': 'Basic ' + authEncode,
         'Content-Length': 0,
-      }
+      },
     })
     .then(response => {
-      console.log(response);
-      dispatch(requestUserInfo(state.login.id));
+      dispatch({
+        type: FOLLOW,
+        id,
+        login: state.login.id,
+      });
     })
     .catch(err => {
       console.log(err.response);
     });
-  }
+  };
 }
 
 export function unfollow(id) {
@@ -192,43 +196,69 @@ export function unfollow(id) {
     const authEncode = state.login.authEncode;
     axios.delete(`https://api.github.com/user/following/${id}`, {
       headers: {
-        Authorization: "Basic " + authEncode,
-      }
+        Authorization: 'Basic ' + authEncode,
+      },
     })
       .then(response => {
-        console.log(response);
-        dispatch(requestUserInfo(state.login.id));
+        dispatch({
+          type: UNFOLLOW,
+          id,
+          login: state.login.id,
+        });
       })
       .catch(err => {
         console.log(err);
       });
-  }
+  };
 }
 
 export function star(username, reponame) {
-  return {
-    type: STAR,
-    username,
-    reponame,
+  return (dispatch, getState) => {
+    const state = getState();
+    const authEncode = state.login.authEncode;
+    axios.put(`https://api.github.com/user/starred/${username}/${reponame}`, '', {
+      headers: {
+        'Authorization': 'Basic ' + authEncode,
+        'Content-Length': 0,
+      },
+    })
+      .then(response => {
+        dispatch(requestCurrentUserInfo(state.login.id));
+      })
+      .catch(err => {
+        console.log(err);
+      });
   };
 }
 
 export function unstar(username, reponame) {
-  return {
-    type: UNSTAR,
-    username,
-    reponame,
+  return (dispatch, getState) => {
+    const state = getState();
+    const authEncode = state.login.authEncode;
+    axios.delete(`https://api.github.com/user/starred/${username}/${reponame}`, {
+      headers: {
+        'Authorization': 'Basic ' + authEncode,
+        'Content-Length': 0,
+      },
+    })
+      .then(response => {
+        console.log(response);
+        dispatch(requestCurrentUserInfo(state.login.id));
+      })
+      .catch(err => {
+        console.log(err);
+      });
   };
 }
 
 export function displayCurrent() {
   return {
     type: DISPLAY_CURRENT,
-  }
+  };
 }
 
 export function displayLogin() {
   return {
     type: DISPLAY_LOGIN,
-  }
+  };
 }
