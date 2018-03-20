@@ -38,6 +38,22 @@ function users(state = {}, action) {
   const userInfo = newState[action.id];
   switch (action.type) {
     case RECEIVE_USER:
+      const info = receiveUserInfo(action.json);
+      newState[action.id] = info;
+      if (action.loginId) {
+        const following = newState[action.loginId].following;
+        let index = -1;
+        following.forEach((user, idx) => {
+          if (user.login == action.id) {
+            index = idx;
+          }
+        });
+        if (index > -1) {
+          following[index] = info;
+        }
+        newState[action.loginId].following = following.slice();
+      }
+      return newState;
     case RECEIVE_LOGIN:
       newState[action.id] = receiveUserInfo(action.json);
       return newState;
@@ -51,11 +67,16 @@ function users(state = {}, action) {
       userInfo.followers = action.json.data;
       return newState;
     case FOLLOW:
-      let following = newState[action.login].following;
+      let following = newState[action.login].following.slice();
       following.push({login: action.id});
+      newState[action.login].following = following;
+      newState[action.login].followingNum++;
+      if (newState[action.id]) {
+        newState[action.id].followersNum++;
+      }
       return newState;
     case UNFOLLOW:
-      following = newState[action.login].following;
+      following = newState[action.login].following.slice();
       let index = -1;
       following.forEach((element, idx) => {
         if (element.login == action.id) {
@@ -63,7 +84,12 @@ function users(state = {}, action) {
         }
       });
       if (index > -1) {
-        newState[action.login].following = following.splice(index, 1);
+        following.splice(index - 1, 1);
+        newState[action.login].following = following;
+      }
+      newState[action.login].followingNum--;
+      if (newState[action.id]) {
+        newState[action.id].followersNum--;
       }
       return newState;
     default:

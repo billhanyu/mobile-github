@@ -39,6 +39,13 @@ class Profile extends Component {
         });
       }
     }
+
+    if (!loginProfile) {
+      this.setState({
+        followable: false,
+        unfollowable: false,
+      });
+    }
   }
 
   onClickChangePage() {
@@ -74,7 +81,7 @@ class Profile extends Component {
       bio,
       website,
       email,
-      createdAt,
+      created_at,
       reposCount,
       followersNum,
       followingNum,
@@ -91,7 +98,7 @@ class Profile extends Component {
             <Text style={styles.bioTexts}>bio: {bio}</Text>
             <Text style={styles.bioTexts}>{website}</Text>
             <Text style={styles.bioTexts}>email: {email}</Text>
-            <Text style={styles.bioTexts}>Since {createdAt ? createdAt.split('T')[0] : ''}</Text>
+            <Text style={styles.bioTexts}>Since {created_at ? created_at.split('T')[0] : ''}</Text>
           </View>
         </View>
         <View style={styles.bottomHalf}>

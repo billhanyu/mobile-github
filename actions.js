@@ -33,11 +33,11 @@ export function changeUser(id) {
   };
 }
 
-function requestUserInfo(id) {
+function requestUserInfo(id, loginId) {
   return (dispatch, getState) => {
     axios.get(`https://api.github.com/users/${id}`, params)
       .then(response => {
-        dispatch(receiveUserInfo(id, response));
+        dispatch(receiveUserInfo(id, response, loginId));
         dispatch(requestRepos(id));
         dispatch(requestFollowers(id));
         dispatch(requestFollowing(id));
@@ -53,11 +53,12 @@ export function requestCurrentUserInfo() {
   };
 }
 
-export function receiveUserInfo(id, json) {
+export function receiveUserInfo(id, json, loginId) {
   return {
     type: RECEIVE_USER,
     id,
     json,
+    loginId,
   };
 }
 
@@ -183,6 +184,9 @@ export function follow(id) {
         id,
         login: state.login.id,
       });
+    })
+    .then(() => {
+      dispatch(requestUserInfo(id, state.login.id));
     })
     .catch(err => {
       console.log(err.response);
