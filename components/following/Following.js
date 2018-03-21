@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { View, StyleSheet, Text, ListView } from 'react-native';
+import { View, StyleSheet, ListView } from 'react-native';
 import FollowingItem from './FollowingItem';
 
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });

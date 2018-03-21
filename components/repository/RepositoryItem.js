@@ -103,7 +103,7 @@ class RepositoryItem extends Component {
     return (
       data == 'None'
         ?
-        <View style={styles.container}>
+        <View style={styles.horizontal}>
           <Text style={styles.noneText}>
             None
         </Text>

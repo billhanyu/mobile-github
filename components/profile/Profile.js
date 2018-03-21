@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { requestCurrentUserInfo, follow, unfollow, displayCurrent, displayLogin } from '../../actions';
-import { StyleSheet, Text, View, Image, TouchableOpacity, Button, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Image, Button, ScrollView } from 'react-native';
 
 class Profile extends Component {
   constructor(props) {
@@ -20,8 +20,6 @@ class Profile extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    let followable = false;
-    let unfollowable = false;
     const loginProfile = nextProps.loginProfile;
     if (nextProps.mode == 'current'
       && loginProfile

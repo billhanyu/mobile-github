@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, TabBarIOS } from 'react-native';
+import { TabBarIOS } from 'react-native';
 import Profile from './components/profile/Profile';
 import Repository from './components/repository/Repository';
 import Followers from './components/followers/Followers';
