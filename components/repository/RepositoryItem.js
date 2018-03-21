@@ -1,12 +1,23 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet, Linking, TouchableOpacity, Button } from 'react-native';
-import { star, unstar, checkStar } from '../../actions';
+import { Text, View, StyleSheet, Linking, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import axios from 'axios';
+import Icon from 'react-native-vector-icons/Entypo';
 
 class RepositoryItem extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      starred: 'fuck',
+    };
+    this.star = this.star.bind(this);
+    this.unstar = this.unstar.bind(this);
+  }
+
   // get the username from props, might return undefined bc of 'None'
   usernameFromProps(props) {
+    const data = this.props.data;
     let ownerUrl;
     let arr;
     let ownerUsername;
@@ -18,13 +29,72 @@ class RepositoryItem extends Component {
     return ownerUsername;
   }
 
+  componentDidMount() {
+    this.checkStar(this.props);
+  }
+
   componentWillReceiveProps(newProps) {
+    this.checkStar(newProps);
+  }
+
+  checkStar(props) {
     let ownerUsername;
-    if (newProps.login) {
-      if (ownerUsername = this.username(newProps)) {
-        this.props.checkStar(ownerUsername, newProps.data.name);
-      }
+    if (props.login) {
+      ownerUsername = this.usernameFromProps(props);
+      if (ownerUsername) {
+        console.log(`checking star for ${props.data.name}`);
+        axios.get(`https://api.github.com/user/starred/${ownerUsername}/${props.data.name}`, {
+          headers: {
+            'Authorization': 'Basic ' + props.authEncode,
+            'Content-Length': 0,
+          },
+        })
+          .then(response => {
+            this.setState({
+              starred: true,
+            });
+          })
+          .catch(err => {
+            this.setState({
+              starred: false,
+            });
+          });
+      };
     }
+  }
+
+  star(username, reponame) {
+    this.setState({
+      starred: true,
+    });
+    axios.put(`https://api.github.com/user/starred/${username}/${reponame}`, '', {
+      headers: {
+        'Authorization': 'Basic ' + this.props.authEncode,
+        'Content-Length': 0,
+      },
+    })
+      .catch(err => {
+        this.setState({
+          starred: false,
+        });
+      });
+  }
+
+  unstar(username, reponame) {
+    this.setState({
+      starred: false,
+    });
+    axios.delete(`https://api.github.com/user/starred/${username}/${reponame}`, {
+      headers: {
+        'Authorization': 'Basic ' + this.props.authEncode,
+        'Content-Length': 0,
+      },
+    })
+      .catch(err => {
+        this.setState({
+          starred: true,
+        });
+      });
   }
 
   render() {
@@ -32,46 +102,54 @@ class RepositoryItem extends Component {
     const ownerUsername = this.usernameFromProps(this.props);
     return (
       data == 'None'
-      ?
-      <View style={styles.container}>
-        <Text style={styles.noneText}>
-          None
-        </Text>
-      </View>
-      :
-      <TouchableOpacity
-        onPress={() => {
-          Linking.openURL(data.html_url).catch(err => console.error('An error occurred', err));
-        }}
-      >
+        ?
         <View style={styles.container}>
-          <View style={styles.gen}>
-            <Text style={styles.repoName}>{data.name}</Text>
-            <Text style={styles.text}>{ownerUsername}</Text>
-          </View>
-          <Text style={styles.text}>{data.description}</Text>
-          {data.starred == false &&
-            <Button
-              onPress={()=>this.props.star(data.owner.login, data.name)}
-              title='star'
-            />
-          }
-          {data.starred == true &&
-            <Button
-              onPress={()=>this.props.unstar(data.owner.login, data.name)}
-              title='unstar'
-            />
-          }
+          <Text style={styles.noneText}>
+            None
+        </Text>
         </View>
-      </TouchableOpacity>
+        :
+        <TouchableOpacity
+          onPress={() => {
+            Linking.openURL(data.html_url).catch(err => console.error('An error occurred', err));
+          }}
+        >
+          <View style={styles.horizontal}>
+            {this.state.starred == false &&
+              <TouchableOpacity
+                onPress={() => this.star(data.owner.login, data.name)}
+              >
+                <Icon name='star-outlined' size={30} />
+              </TouchableOpacity>
+            }
+            {this.state.starred == true &&
+              <TouchableOpacity
+                onPress={() => this.unstar(data.owner.login, data.name)}
+              >
+                <Icon name='star' size={30} />
+              </TouchableOpacity>
+            }
+            <View style={styles.container}>
+              <View style={styles.gen}>
+                <Text style={styles.repoName}>{data.name}</Text>
+                <Text style={styles.text}>{ownerUsername}</Text>
+              </View>
+              <Text style={styles.text}>{data.description}</Text>
+            </View>
+          </View>
+        </TouchableOpacity>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  horizontal: {
+    flex: 1,
+    flexDirection: 'row',
+    padding: 12,
+  },
   container: {
     flex: 1,
-    padding: 12,
   },
   text: {
     marginLeft: 12,
@@ -94,22 +172,13 @@ const styles = StyleSheet.create({
 function mapStateToProps(state) {
   return {
     login: state.login.id,
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    star: (username, reponame) => dispatch(star(username, reponame)),
-    unstar: (username, reponame) => dispatch(unstar(username, reponame)),
-    checkStar: (username, reponame) => dispatch(checkStar(username, reponame)),
+    authEncode: state.login.authEncode,
   };
 }
 
 RepositoryItem.propTypes = {
-  data: PropTypes.object,
-  star: PropTypes.func,
-  unstar: PropTypes.func,
-  checkStar: PropTypes.func,
+  authEncode: PropTypes.string,
+  data: PropTypes.any,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(RepositoryItem);
+export default connect(mapStateToProps)(RepositoryItem);
