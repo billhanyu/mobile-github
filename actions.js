@@ -23,6 +23,7 @@ export const DISPLAY_CURRENT = 'DISPLAY_CURRENT';
 export const DISPLAY_LOGIN = 'DISPLAY_LOGIN';
 export const STAR_REPO = 'STAR_REPO';
 export const UNSTAR_REPO = 'UNSTAR_REPO';
+export const CHECK_STAR = 'CHECK_STAR';
 
 const params = { params: auth };
 
@@ -227,7 +228,11 @@ export function star(username, reponame) {
       },
     })
       .then(response => {
-        dispatch(requestCurrentUserInfo(state.login.id));
+        dispatch({
+          type: STAR,
+          username,
+          reponame,
+        });
       })
       .catch(err => {
         console.log(err);
@@ -246,8 +251,11 @@ export function unstar(username, reponame) {
       },
     })
       .then(response => {
-        console.log(response);
-        dispatch(requestCurrentUserInfo(state.login.id));
+        dispatch({
+          type: UNSTAR,
+          username,
+          reponame,
+        });
       })
       .catch(err => {
         console.log(err);
@@ -264,5 +272,30 @@ export function displayCurrent() {
 export function displayLogin() {
   return {
     type: DISPLAY_LOGIN,
+  };
+}
+
+export function checkStar(username, reponame) {
+  return (dispatch, getState) => {
+    const state = getState();
+    const authEncode = state.login.authEncode;
+    axios.get(`https://api.github.com/user/starred/${username}/${reponame}`, {
+      headers: {
+        'Authorization': 'Basic ' + authEncode,
+        'Content-Length': 0,
+      },
+    })
+      .then(response => {
+        console.log(response);
+        dispatch({
+          type: CHECK_STAR,
+          id: username,
+          reponame,
+          starred: response.status == 204,
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
   };
 }

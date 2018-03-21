@@ -1,19 +1,35 @@
 import React, { Component } from 'react';
 import { Text, View, StyleSheet, Linking, TouchableOpacity, Button } from 'react-native';
-import { star, unstar } from '../../actions';
+import { star, unstar, checkStar } from '../../actions';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 class RepositoryItem extends Component {
-  render() {
-    const data = this.props.data;
+  // get the username from props, might return undefined bc of 'None'
+  usernameFromProps(props) {
     let ownerUrl;
     let arr;
     let ownerUsername;
     if (data !== 'None') {
       ownerUrl = data.owner.url;
       arr = ownerUrl.split('/');
-      ownerUsername = arr[arr.length-1];
+      ownerUsername = arr[arr.length - 1];
     }
+    return ownerUsername;
+  }
+
+  componentWillReceiveProps(newProps) {
+    let ownerUsername;
+    if (newProps.login) {
+      if (ownerUsername = this.username(newProps)) {
+        this.props.checkStar(ownerUsername, newProps.data.name);
+      }
+    }
+  }
+
+  render() {
+    const data = this.props.data;
+    const ownerUsername = this.usernameFromProps(this.props);
     return (
       data == 'None'
       ?
@@ -34,14 +50,18 @@ class RepositoryItem extends Component {
             <Text style={styles.text}>{ownerUsername}</Text>
           </View>
           <Text style={styles.text}>{data.description}</Text>
-          <Button
-            onPress={()=>this.props.star(data.owner.login, data.name)}
-            title='star'
-          />
-          <Button
-            onPress={()=>this.props.unstar(data.owner.login, data.name)}
-            title='unstar'
-          />
+          {data.starred == false &&
+            <Button
+              onPress={()=>this.props.star(data.owner.login, data.name)}
+              title='star'
+            />
+          }
+          {data.starred == true &&
+            <Button
+              onPress={()=>this.props.unstar(data.owner.login, data.name)}
+              title='unstar'
+            />
+          }
         </View>
       </TouchableOpacity>
     );
@@ -72,14 +92,24 @@ const styles = StyleSheet.create({
 });
 
 function mapStateToProps(state) {
-  return {};
+  return {
+    login: state.login.id,
+  };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
     star: (username, reponame) => dispatch(star(username, reponame)),
     unstar: (username, reponame) => dispatch(unstar(username, reponame)),
+    checkStar: (username, reponame) => dispatch(checkStar(username, reponame)),
   };
 }
+
+RepositoryItem.propTypes = {
+  data: PropTypes.object,
+  star: PropTypes.func,
+  unstar: PropTypes.func,
+  checkStar: PropTypes.func,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(RepositoryItem);

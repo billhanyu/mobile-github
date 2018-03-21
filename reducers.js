@@ -13,8 +13,10 @@ import {
   DISPLAY_LOGIN,
   FOLLOW,
   UNFOLLOW,
+  CHECK_STAR,
 } from './actions';
 import ID from './constants/id';
+import { findIndexInArrayWithAttribute } from './common/helper';
 
 // id is the current viewing user's GitHub username in app
 function currentId(state = ID, action) {
@@ -42,12 +44,7 @@ function users(state = {}, action) {
       newState[action.id] = info;
       if (action.loginId) {
         const following = newState[action.loginId].following;
-        let index = -1;
-        following.forEach((user, idx) => {
-          if (user.login == action.id) {
-            index = idx;
-          }
-        });
+        const index = findIndexInArrayWithAttribute(following, 'login', action.id);
         if (index > -1) {
           following[index] = info;
         }
@@ -77,14 +74,9 @@ function users(state = {}, action) {
       return newState;
     case UNFOLLOW:
       following = newState[action.login].following.slice();
-      let index = -1;
-      following.forEach((element, idx) => {
-        if (element.login == action.id) {
-          index = idx;
-        }
-      });
+      const index = findIndexInArrayWithAttribute(following, 'login', action.id);
       if (index > -1) {
-        following.splice(index - 1, 1);
+        following.splice(index, 1);
         newState[action.login].following = following;
       }
       newState[action.login].followingNum--;
@@ -92,6 +84,16 @@ function users(state = {}, action) {
         newState[action.id].followersNum--;
       }
       return newState;
+    case CHECK_STAR:
+      const repos = newState[action.id].repos;
+      const index = findIndexInArrayWithAttribute(repos, 'name', action.reponame);
+      if (index > -1) {
+        const repo = repos[index];
+        repos[index] = Object.assign({}, repo, {starred: action.starred});
+      }
+      return newState;
+    case STAR:
+    case UNSTAR:
     default:
       return state;
   }
@@ -150,6 +152,7 @@ function receiveUserInfo(json) {
     followingNum: user.following,
     following: [],
     followers: [],
+    repos: [],
   });
 }
 
