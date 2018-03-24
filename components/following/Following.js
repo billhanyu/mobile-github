@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { View, StyleSheet, ListView } from 'react-native';
 import FollowingItem from './FollowingItem';
+import PropTypes from 'prop-types';
 
 const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
 
@@ -36,5 +37,10 @@ function mapStateToProps(state) {
     following: display == 'current' ? currentFollowing : loginFollowing,
   };
 }
+
+Following.propTypes = {
+  following: PropTypes.array,
+  setTab: PropTypes.func.isRequired,
+};
 
 export default connect(mapStateToProps)(Following);

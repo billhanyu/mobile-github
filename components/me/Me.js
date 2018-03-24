@@ -3,6 +3,7 @@ import { ScrollView, View, TextInput, Text, StyleSheet, Button, Keyboard, Toucha
 import { requestLogin, logout } from '../../actions';
 import { connect } from 'react-redux';
 import Profile from '../profile/Profile';
+import PropTypes from 'prop-types';
 
 class Me extends Component {
   constructor(props) {
@@ -60,9 +61,9 @@ class Me extends Component {
             />
           </View>
         </ScrollView>
-      </TouchableWithoutFeedback>
-    
-    const profile = <Profile setTab={this.props.setTab} logout={this.props.logout} mode="me" />
+      </TouchableWithoutFeedback>;
+
+    const profile = <Profile setTab={this.props.setTab} logout={this.props.logout} mode="me" />;
 
     return this.props.id ? profile : login;
   }
@@ -106,5 +107,13 @@ function mapDispatchToProps(dispatch) {
     logout: () => dispatch(logout()),
   };
 }
+
+Me.propTypes = {
+  requestLogIn: PropTypes.func.isRequired,
+  logout: PropTypes.func.isRequired,
+  error: PropTypes.string,
+  id: PropTypes.string,
+  setTab: PropTypes.func.isRequired,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(Me);

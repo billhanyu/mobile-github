@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { View, Text, ListView, StyleSheet } from 'react-native';
+import { View, ListView, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import RepositoryItem from './RepositoryItem';
+import PropTypes from 'prop-types';
 
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
@@ -36,5 +37,9 @@ function mapStateToProps(state) {
     repos: display == 'current' ? currentRepos : loginRepos,
   };
 }
+
+Repository.propTypes = {
+  repos: PropTypes.array,
+};
 
 export default connect(mapStateToProps)(Repository);
