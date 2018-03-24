@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { requestCurrentUserInfo, follow, unfollow, displayCurrent, displayLogin } from '../../actions';
+import { requestCurrentUserInfo, follow, unfollow, displayCurrent, displayLogin, saveUsers } from '../../actions';
 import { StyleSheet, Text, View, Image, Button, ScrollView } from 'react-native';
+import PropTypes from 'prop-types';
 
 class Profile extends Component {
   constructor(props) {
@@ -44,6 +45,8 @@ class Profile extends Component {
         unfollowable: false,
       });
     }
+
+    this.props.saveUsers();
   }
 
   onClickChangePage() {
@@ -79,11 +82,12 @@ class Profile extends Component {
       bio,
       website,
       email,
-      created_at,
       reposCount,
       followersNum,
       followingNum,
     } = data;
+
+    const createdAt = data.created_at;
 
     return (
       <ScrollView style={styles.container}>
@@ -96,7 +100,7 @@ class Profile extends Component {
             <Text style={styles.bioTexts}>bio: {bio}</Text>
             <Text style={styles.bioTexts}>{website}</Text>
             <Text style={styles.bioTexts}>email: {email}</Text>
-            <Text style={styles.bioTexts}>Since {created_at ? created_at.split('T')[0] : ''}</Text>
+            <Text style={styles.bioTexts}>Since {createdAt ? createdAt.split('T')[0] : ''}</Text>
           </View>
         </View>
         <View style={styles.bottomHalf}>
@@ -214,7 +218,25 @@ function mapDispatchToProps(dispatch) {
     unfollow: (id) => dispatch(unfollow(id)),
     displayCurrent: () => dispatch(displayCurrent()),
     displayLogin: () => dispatch(displayLogin()),
+    saveUsers: () => dispatch(saveUsers()),
   });
 }
+
+Profile.propTypes = {
+  requestCurrentUserInfo: PropTypes.func.isRequired,
+  loginProfile: PropTypes.object,
+  displayCurrent: PropTypes.func.isRequired,
+  displayLogin: PropTypes.func.isRequired,
+  mode: PropTypes.string,
+  follow: PropTypes.func.isRequired,
+  unfollow: PropTypes.func.isRequired,
+  logout: PropTypes.func,
+  current: PropTypes.object,
+  login: PropTypes.object,
+  currentId: PropTypes.string,
+  loginId: PropTypes.string,
+  setTab: PropTypes.func.isRequired,
+  saveUsers: PropTypes.func.isRequired,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profile);

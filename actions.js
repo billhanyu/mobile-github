@@ -1,6 +1,7 @@
 import axios from 'axios';
 import auth from './constants/auth';
 import { Buffer } from 'buffer';
+import { AsyncStorage } from 'react-native';
 
 export const REQUEST_USER = 'REQUEST_USER';
 export const RECEIVE_USER = 'RECEIVE_USER';
@@ -19,8 +20,8 @@ export const FOLLOW = 'FOLLOW';
 export const UNFOLLOW = 'UNFOLLOW';
 export const DISPLAY_CURRENT = 'DISPLAY_CURRENT';
 export const DISPLAY_LOGIN = 'DISPLAY_LOGIN';
-export const STAR_REPO = 'STAR_REPO';
-export const UNSTAR_REPO = 'UNSTAR_REPO';
+export const LOAD_USERS = 'LOAD_USERS';
+export const SAVE_USERS = 'SAVE_USERS';
 
 const params = { params: auth };
 
@@ -223,5 +224,34 @@ export function displayCurrent() {
 export function displayLogin() {
   return {
     type: DISPLAY_LOGIN,
+  };
+}
+
+export function loadUsers() {
+  return (dispatch, getState) => {
+    AsyncStorage.getItem('@MySuperStore:users')
+      .then(value => {
+        if (value !== null) {
+          dispatch({
+            type: LOAD_USERS,
+            data: JSON.parse(value),
+          });
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
+}
+
+export function saveUsers() {
+  return (dispatch, getState) => {
+    const users = getState().users;
+    AsyncStorage.setItem('@MySuperStore:users', JSON.stringify(users))
+      .then(result => {
+      })
+      .catch(error => {
+        console.log(error);
+      });
   };
 }

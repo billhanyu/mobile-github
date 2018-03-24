@@ -13,6 +13,7 @@ import {
   DISPLAY_LOGIN,
   FOLLOW,
   UNFOLLOW,
+  LOAD_USERS,
 } from './actions';
 import ID from './constants/id';
 import { findIndexInArrayWithAttribute } from './common/helper';
@@ -84,6 +85,8 @@ function users(state = {}, action) {
         newState[action.id].followersNum--;
       }
       return newState;
+    case LOAD_USERS:
+      return action.data;
     default:
       return state;
   }

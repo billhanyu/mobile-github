@@ -5,14 +5,21 @@ import Repository from './components/repository/Repository';
 import Followers from './components/followers/Followers';
 import Following from './components/following/Following';
 import Me from './components/me/Me';
+import { connect } from 'react-redux';
+import { loadUsers } from './actions';
+import PropTypes from 'prop-types';
 
-export default class App extends React.Component {
+class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       selectedTab: 'profile',
     };
     this.setTab = this.setTab.bind(this);
+  }
+
+  componentDidMount() {
+    this.props.loadUsers();
   }
 
   setTab(tabId) {
@@ -68,3 +75,19 @@ export default class App extends React.Component {
     );
   }
 }
+
+function mapStateToProps(state) {
+  return {};
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    loadUsers: () => dispatch(loadUsers()),
+  };
+}
+
+App.propTypes = {
+  loadUsers: PropTypes.func,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
