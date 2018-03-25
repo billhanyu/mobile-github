@@ -5,18 +5,23 @@
   "devDependencies": {
     "babel-eslint": "^8.2.2",
     "babel-preset-react-native-stage-0": "^1.0.1",
+    "chai": "^4.1.2",
+    "chai-as-promised": "^7.1.1",
     "eslint": "^4.19.0",
     "eslint-config-google": "^0.9.1",
     "eslint-plugin-react": "^7.7.0",
     "eslint-plugin-react-native": "^3.2.1",
+    "express": "^4.16.3",
     "jest-react-native": "^18.0.0",
-    "react-test-renderer": "16.2.0"
+    "mocha": "^5.0.5",
+    "react-test-renderer": "16.2.0",
+    "wd": "^1.6.1"
   },
   "scripts": {
     "start": "react-native start",
     "android": "react-native run-android",
     "ios": "react-native run-ios",
-    "test": "node node_modules/jest/bin/jest.js"
+    "test": "mocha --timeout 300000 test/test.js"
   },
   "jest": {
     "preset": "react-native"
