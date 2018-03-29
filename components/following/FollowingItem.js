@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Text, View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
-import { changeUser, requestCurrentUserInfo } from '../../actions';
+import { changeUser, requestCurrentUserInfo, setTab } from '../../actions';
+import PropTypes from 'prop-types';
 
 class FollowingItem extends Component {
   render() {
@@ -18,6 +19,7 @@ class FollowingItem extends Component {
           this.props.changeUser(data.login);
           this.props.setTab('profile');
           this.props.requestCurrentUserInfo();
+          this.props.onPress();
         }}
       >
         <View style={styles.container}>
@@ -60,7 +62,16 @@ function mapDispatchToProps(dispatch) {
   return {
     changeUser: (id) => dispatch(changeUser(id)),
     requestCurrentUserInfo: () => dispatch(requestCurrentUserInfo()),
+    setTab: (tab) => dispatch(setTab(tab)),
   };
 }
+
+FollowingItem.propTypes = {
+  data: PropTypes.any,
+  changeUser: PropTypes.func,
+  setTab: PropTypes.func,
+  requestCurrentUserInfo: PropTypes.func,
+  onPress: PropTypes.func,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(FollowingItem);

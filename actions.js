@@ -22,6 +22,13 @@ export const DISPLAY_CURRENT = 'DISPLAY_CURRENT';
 export const DISPLAY_LOGIN = 'DISPLAY_LOGIN';
 export const LOAD_USERS = 'LOAD_USERS';
 export const SAVE_USERS = 'SAVE_USERS';
+export const SEARCH_BEGIN = 'SEARCH_BEGIN';
+export const SEARCH_RESULTS = 'SEARCH_RESULTS';
+export const SEARCH_ERROR = 'SEARCH_ERROR';
+export const SEARCH_CHANGE_SORT = 'SEARCH_CHANGE_SORT';
+export const SEARCHING_START = 'SEARCHING_START';
+export const SEARCHING_END = 'SEARCHING_END';
+export const SET_TAB = 'SET_TAB';
 
 const params = { params: auth };
 
@@ -253,5 +260,63 @@ export function saveUsers() {
       .catch(error => {
         console.log(error);
       });
+  };
+}
+
+export function beginSearch(searchType, q, sort) {
+  return (dispatch, getState) => {
+    dispatch({
+      type: SEARCH_BEGIN,
+      searchType,
+    });
+    const state = getState();
+    const authEncode = state.login.authEncode;
+    axios.get(`https://api.github.com/search/${searchType}`, {
+      params: {
+        q,
+        sort,
+      },
+      headers: {
+        Authorization: 'Basic ' + authEncode,
+      },
+    })
+      .then(response => {
+        dispatch({
+          type: SEARCH_RESULTS,
+          data: response.data,
+        });
+      })
+      .catch(err => {
+        dispatch({
+          type: SEARCH_ERROR,
+          message: 'Error searching',
+        });
+      });
+  };
+}
+
+export function changeSearchSort(sort) {
+  return {
+    type: SEARCH_CHANGE_SORT,
+    sort,
+  };
+}
+
+export function startSearch() {
+  return {
+    type: SEARCHING_START,
+  };
+}
+
+export function endSearch() {
+  return {
+    type: SEARCHING_END,
+  };
+}
+
+export function setTab(tab) {
+  return {
+    type: SET_TAB,
+    tab,
   };
 }

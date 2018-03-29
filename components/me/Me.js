@@ -63,7 +63,7 @@ class Me extends Component {
         </ScrollView>
       </TouchableWithoutFeedback>;
 
-    const profile = <Profile setTab={this.props.setTab} logout={this.props.logout} mode="me" />;
+    const profile = <Profile logout={this.props.logout} mode='me' />;
 
     return this.props.id ? profile : login;
   }
@@ -113,7 +113,6 @@ Me.propTypes = {
   logout: PropTypes.func.isRequired,
   error: PropTypes.string,
   id: PropTypes.string,
-  setTab: PropTypes.func.isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Me);

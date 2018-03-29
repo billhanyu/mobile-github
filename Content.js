@@ -6,26 +6,16 @@ import Followers from './components/followers/Followers';
 import Following from './components/following/Following';
 import Me from './components/me/Me';
 import { connect } from 'react-redux';
-import { loadUsers } from './actions';
+import { loadUsers, setTab } from './actions';
 import PropTypes from 'prop-types';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      selectedTab: 'profile',
-    };
-    this.setTab = this.setTab.bind(this);
   }
 
   componentDidMount() {
     this.props.loadUsers();
-  }
-
-  setTab(tabId) {
-    this.setState({
-      selectedTab: tabId,
-    });
   }
 
   render() {
@@ -33,43 +23,43 @@ class App extends React.Component {
       <TabBarIOS>
         <TabBarIOS.Item
           icon={require('./images/profile.png')}
-          selected={this.state.selectedTab === 'profile'}
-          onPress={() => this.setTab('profile')}
+          selected={this.props.tab === 'profile'}
+          onPress={() => this.props.setTab('profile')}
           title='Profile'
         >
-          <Profile setTab={this.setTab} mode="current"/>
+          <Profile mode='current' />
         </TabBarIOS.Item>
         <TabBarIOS.Item
           icon={require('./images/repo.png')}
-          selected={this.state.selectedTab === 'repo'}
-          onPress={() => this.setTab('repo')}
+          selected={this.props.tab === 'repo'}
+          onPress={() => this.props.setTab('repo')}
           title='Repositories'
         >
           <Repository />
         </TabBarIOS.Item>
         <TabBarIOS.Item
           icon={require('./images/following.png')}
-          selected={this.state.selectedTab === 'following'}
-          onPress={() => this.setTab('following')}
+          selected={this.props.tab === 'following'}
+          onPress={() => this.props.setTab('following')}
           title='Following'
         >
-          <Following setTab={this.setTab}/>
+          <Following setTab={this.props.setTab}/>
         </TabBarIOS.Item>
         <TabBarIOS.Item
           icon={require('./images/followers.png')}
-          selected={this.state.selectedTab === 'follower'}
-          onPress={() => this.setTab('follower')}
+          selected={this.props.tab === 'follower'}
+          onPress={() => this.props.setTab('follower')}
           title='Followers'
         >
-          <Followers setTab={this.setTab}/>
+          <Followers setTab={this.props.setTab}/>
         </TabBarIOS.Item>
         <TabBarIOS.Item
           icon={require('./images/me.png')}
-          selected={this.state.selectedTab === 'me'}
-          onPress={() => this.setTab('me')}
+          selected={this.props.tab === 'me'}
+          onPress={() => this.props.setTab('me')}
           title='Me'
         >
-          <Me setTab={this.setTab} />
+          <Me />
         </TabBarIOS.Item>
       </TabBarIOS>
     );
@@ -77,17 +67,22 @@ class App extends React.Component {
 }
 
 function mapStateToProps(state) {
-  return {};
+  return {
+    tab: state.tab,
+  };
 }
 
 function mapDispatchToProps(dispatch) {
   return {
     loadUsers: () => dispatch(loadUsers()),
+    setTab: (tab) => dispatch(setTab(tab)),
   };
 }
 
 App.propTypes = {
   loadUsers: PropTypes.func,
+  tab: PropTypes.string,
+  setTab: PropTypes.func,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

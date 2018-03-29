@@ -43,9 +43,10 @@
 	<key>UIAppFonts</key>
 	<array>
 		<string>Entypo.ttf</string>
+		<string>FontAwesome.ttf</string>
 	</array>
 	<key>LSApplicationCategoryType</key>
-	<string></string>
+	<string>public.app-category.developer-tools</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSExceptionDomains</key>

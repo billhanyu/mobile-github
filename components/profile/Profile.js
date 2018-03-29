@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { requestCurrentUserInfo, follow, unfollow, displayCurrent, displayLogin, saveUsers } from '../../actions';
+import { requestCurrentUserInfo, follow, unfollow, displayCurrent, displayLogin, saveUsers, setTab } from '../../actions';
 import { StyleSheet, Text, View, Image, Button, ScrollView } from 'react-native';
 import PropTypes from 'prop-types';
+import MySearchBar from '../search/MySearchBar';
 
 class Profile extends Component {
   constructor(props) {
@@ -89,12 +90,12 @@ class Profile extends Component {
 
     const createdAt = data.created_at;
 
-    return (
+    const content =
       <ScrollView style={styles.container}>
-        <Text style={{textAlign: 'center', fontSize: 25, paddingTop: 40}}>{name}</Text>
-        <Text style={{textAlign: 'center', fontSize: 20, paddingTop: 20}}>{username}</Text>
+        <Text style={{ textAlign: 'center', fontSize: 25, paddingTop: 40 }}>{name}</Text>
+        <Text style={{ textAlign: 'center', fontSize: 20, paddingTop: 20 }}>{username}</Text>
         <View style={styles.topHalf}>
-          <Image key={avatarUri} source={{uri: avatarUri}} style={{width: 150, height: 150}}>
+          <Image key={avatarUri} source={{ uri: avatarUri }} style={{ width: 150, height: 150 }}>
           </Image>
           <View style={styles.topHalfTexts}>
             <Text style={styles.bioTexts}>bio: {bio}</Text>
@@ -105,7 +106,7 @@ class Profile extends Component {
         </View>
         <View style={styles.bottomHalf}>
           <Button
-            onPress={()=>{
+            onPress={() => {
               this.onClickChangePage();
               this.props.setTab('repo');
             }}
@@ -139,7 +140,7 @@ class Profile extends Component {
           {
             this.state.followable &&
             <Button
-              onPress={e=>this.follow(this.props.currentId)}
+              onPress={e => this.follow(this.props.currentId)}
               style={styles.logout}
               title='Follow'
             />
@@ -147,18 +148,27 @@ class Profile extends Component {
           {
             this.state.unfollowable &&
             <Button
-              onPress={e=>this.unfollow(this.props.currentId)}
+              onPress={e => this.unfollow(this.props.currentId)}
               style={styles.logout}
               title='Unfollow'
             />
           }
         </View>
-      </ScrollView>
-    );
+      </ScrollView>;
+
+    return this.props.mode == 'current'
+      ?
+      <MySearchBar type='users' content={content} />
+      :
+      content;
   }
 }
 
 const styles = StyleSheet.create({
+  full: {
+    flex: 1,
+    paddingTop: 40,
+  },
   container: {
     padding: 20,
     flex: 1,
@@ -196,7 +206,7 @@ const styles = StyleSheet.create({
 });
 
 function mapStateToProps(state) {
-  const { currentId, users, login } = state;
+  const { currentId, users, login, search } = state;
   const loginId = login.id;
   let loginProfile;
   if (loginId) {
@@ -205,9 +215,10 @@ function mapStateToProps(state) {
   return {
     currentId,
     loginId,
-    current: {...users[currentId]},
-    login: { ...users[loginId]},
+    current: { ...users[currentId] },
+    login: { ...users[loginId] },
     loginProfile,
+    search,
   };
 }
 
@@ -219,6 +230,7 @@ function mapDispatchToProps(dispatch) {
     displayCurrent: () => dispatch(displayCurrent()),
     displayLogin: () => dispatch(displayLogin()),
     saveUsers: () => dispatch(saveUsers()),
+    setTab: (tab) => dispatch(setTab(tab)),
   });
 }
 
@@ -227,7 +239,7 @@ Profile.propTypes = {
   loginProfile: PropTypes.object,
   displayCurrent: PropTypes.func.isRequired,
   displayLogin: PropTypes.func.isRequired,
-  mode: PropTypes.string,
+  mode: PropTypes.oneOf(['current', 'me']),
   follow: PropTypes.func.isRequired,
   unfollow: PropTypes.func.isRequired,
   logout: PropTypes.func,

@@ -13,7 +13,7 @@ class Following extends Component {
       <ListView
         dataSource={ds.cloneWithRows(rows)}
         enableEmptySections={true}
-        renderRow={data => <FollowingItem data={data} setTab={this.props.setTab} />}
+        renderRow={data => <FollowingItem data={data} />}
         renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
       >
       </ListView>

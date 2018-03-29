@@ -42,7 +42,6 @@ class RepositoryItem extends Component {
     if (props.login) {
       ownerUsername = this.usernameFromProps(props);
       if (ownerUsername) {
-        console.log(`checking star for ${props.data.name}`);
         axios.get(`https://api.github.com/user/starred/${ownerUsername}/${props.data.name}`, {
           headers: {
             'Authorization': 'Basic ' + props.authEncode,
@@ -106,7 +105,7 @@ class RepositoryItem extends Component {
         <View style={styles.horizontal}>
           <Text style={styles.noneText}>
             None
-        </Text>
+          </Text>
         </View>
         :
         <TouchableOpacity
