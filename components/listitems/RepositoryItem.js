@@ -1,32 +1,34 @@
 import React, { Component } from 'react';
 import { Text, View, StyleSheet, Linking, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
+import Modal from 'react-native-modal';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/Entypo';
+import RepositoryView from '../repository/RepositoryView';
 
 class RepositoryItem extends Component {
   constructor(props) {
     super(props);
     this.state = {
       starred: 'fuck',
+      modalVisible: false,
     };
     this.star = this.star.bind(this);
     this.unstar = this.unstar.bind(this);
+    this.setModalVisible = this.setModalVisible.bind(this);
+  }
+
+  setModalVisible(visible) {
+    this.setState({ modalVisible: visible });
   }
 
   // get the username from props, might return undefined bc of 'None'
   usernameFromProps(props) {
     const data = this.props.data;
-    let ownerUrl;
-    let arr;
-    let ownerUsername;
-    if (data !== 'None') {
-      ownerUrl = data.owner.url;
-      arr = ownerUrl.split('/');
-      ownerUsername = arr[arr.length - 1];
-    }
-    return ownerUsername;
+    const ownerUrl = data.owner.url;
+    const arr = ownerUrl.split('/');
+    return arr[arr.length - 1];
   }
 
   componentDidMount() {
@@ -100,43 +102,52 @@ class RepositoryItem extends Component {
     const data = this.props.data;
     const ownerUsername = this.usernameFromProps(this.props);
     return (
-      data == 'None'
-        ?
+      <TouchableOpacity
+        onPress={() => {
+          // Linking.openURL(data.html_url).catch(err => console.error('An error occurred', err));
+          this.setModalVisible(true);
+        }}
+      >
         <View style={styles.horizontal}>
-          <Text style={styles.noneText}>
-            None
-          </Text>
-        </View>
-        :
-        <TouchableOpacity
-          onPress={() => {
-            Linking.openURL(data.html_url).catch(err => console.error('An error occurred', err));
-          }}
-        >
-          <View style={styles.horizontal}>
-            {this.state.starred == false &&
-              <TouchableOpacity
-                onPress={() => this.star(data.owner.login, data.name)}
-              >
-                <Icon name='star-outlined' size={30} />
-              </TouchableOpacity>
-            }
-            {this.state.starred == true &&
-              <TouchableOpacity
-                onPress={() => this.unstar(data.owner.login, data.name)}
-              >
-                <Icon name='star' size={30} />
-              </TouchableOpacity>
-            }
-            <View style={styles.container}>
-              <View style={styles.gen}>
-                <Text style={styles.repoName}>{data.name}</Text>
-                <Text style={styles.text}>{ownerUsername}</Text>
-              </View>
-              <Text style={styles.text}>{data.description}</Text>
+          <Modal
+            backdropColor={'red'}
+            backdropOpacity={0.1}
+            animationIn={'zoomInDown'}
+            animationOut={'zoomOutUp'}
+            animationInTiming={1000}
+            animationOutTiming={1000}
+            backdropTransitionInTiming={1000}
+            backdropTransitionOutTiming={1000}
+            transparent={false}
+            visible={this.state.modalVisible}
+            onRequestClose={() => {
+              alert('Modal has been closed.');
+            }}>
+            <RepositoryView name={data.name} setModalVisible={this.setModalVisible} />
+          </Modal>
+          {this.state.starred == false &&
+            <TouchableOpacity
+              onPress={() => this.star(data.owner.login, data.name)}
+            >
+              <Icon name='star-outlined' size={30} />
+            </TouchableOpacity>
+          }
+          {this.state.starred == true &&
+            <TouchableOpacity
+              onPress={() => this.unstar(data.owner.login, data.name)}
+            >
+              <Icon name='star' size={30} />
+            </TouchableOpacity>
+          }
+          <View style={styles.container}>
+            <View style={styles.gen}>
+              <Text style={styles.repoName}>{data.name}</Text>
+              <Text style={styles.text}>{ownerUsername}</Text>
             </View>
+            <Text style={styles.text}>{data.description}</Text>
           </View>
-        </TouchableOpacity>
+        </View>
+      </TouchableOpacity>
     );
   }
 }
@@ -162,9 +173,6 @@ const styles = StyleSheet.create({
   gen: {
     flex: 1,
     flexDirection: 'row',
-  },
-  noneText: {
-    fontSize: 16,
   },
 });
 

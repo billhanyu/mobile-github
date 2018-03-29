@@ -12,10 +12,11 @@ class SearchList extends Component {
     const rows = this.props.results;
     return (
       <FlatList
+        refreshing={this.props.loading}
         data={rows}
-        keyExtractor={(item, idx) => item.login}
+        keyExtractor={(item, idx) => this.props.searchType == 'users' ? item.login : item.id}
         renderItem={({ item }) => {
-          return <SearchItem data={item} />;
+          return <SearchItem searchType={this.props.searchType} data={item} />;
         }}
       />
     );
@@ -23,6 +24,7 @@ class SearchList extends Component {
 }
 
 SearchList.propTypes = {
+  loading: PropTypes.bool,
   results: PropTypes.array,
   searchType: PropTypes.oneOf(['users', 'repositories']),
 };
