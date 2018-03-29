@@ -165,10 +165,6 @@ class Profile extends Component {
 }
 
 const styles = StyleSheet.create({
-  full: {
-    flex: 1,
-    paddingTop: 40,
-  },
   container: {
     padding: 20,
     flex: 1,

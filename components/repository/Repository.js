@@ -1,33 +1,23 @@
 import React, { Component } from 'react';
-import { View, ListView, StyleSheet } from 'react-native';
+import { FlatList } from 'react-native';
 import { connect } from 'react-redux';
-import RepositoryItem from './RepositoryItem';
+import RepositoryItem from '../listitems/RepositoryItem';
 import PropTypes from 'prop-types';
-
-const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+import NoneItem from '../listitems/NoneItem';
 
 class Repository extends Component {
   render() {
-    const rows = !this.props.repos || !this.props.repos.length ? ['None'] : this.props.repos;
+    const rows = this.props.repos;
     return (
-      <ListView
-        dataSource={ds.cloneWithRows(rows)}
-        enableEmptySections={true}
-        renderRow={data => <RepositoryItem data={data}></RepositoryItem>}
-        renderSeparator={(sectionId, rowId) => <View key={rowId} style={styles.separator} />}
-      >
-      </ListView>
+      <FlatList
+        data={rows}
+        keyExtractor={(item, idx) => item.name}
+        renderItem={({ item }) => <RepositoryItem data={item} />}
+        ListEmptyComponent={<NoneItem />}
+      />
     );
   }
 }
-
-const styles = StyleSheet.create({
-  separator: {
-    flex: 1,
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: '#8E8E8E',
-  },
-});
 
 function mapStateToProps(state) {
   const { currentId, users, display, login } = state;

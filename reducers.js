@@ -173,6 +173,9 @@ function search(state={
     case SEARCHING_END:
       return Object.assign({}, state, {
         searching: false,
+        ready: false,
+        error: '',
+        results: [],
       });
     default:
       return state;

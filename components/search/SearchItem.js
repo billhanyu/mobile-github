@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { endSearch } from '../../actions';
-import FollowingItem from '../following/FollowingItem';
+import UserItem from '../listitems/UserItem';
 
 class SearchItem extends Component {
   constructor(props) {
@@ -12,7 +12,7 @@ class SearchItem extends Component {
   render() {
     const data = this.props.data;
     return (
-      <FollowingItem data={data} onPress={this.props.endSearch} />
+      <UserItem data={data} onPress={this.props.endSearch} />
     );
   }
 }

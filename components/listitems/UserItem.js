@@ -4,22 +4,18 @@ import { connect } from 'react-redux';
 import { changeUser, requestCurrentUserInfo, setTab } from '../../actions';
 import PropTypes from 'prop-types';
 
-class FollowingItem extends Component {
+class UserItem extends Component {
   render() {
     const data = this.props.data;
     return (
-      data == 'None'
-      ?
-      <View style = { styles.container } >
-        <Text style={styles.noneText}>None</Text>
-      </View >
-      :
       <TouchableOpacity
         onPress={() => {
           this.props.changeUser(data.login);
           this.props.setTab('profile');
           this.props.requestCurrentUserInfo();
-          this.props.onPress();
+          if (this.props.onPress) {
+            this.props.onPress();
+          }
         }}
       >
         <View style={styles.container}>
@@ -48,10 +44,6 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 16,
   },
-  noneText: {
-    textAlign: 'center',
-    fontSize: 16,
-  },
 });
 
 function mapStateToProps(state) {
@@ -66,7 +58,7 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-FollowingItem.propTypes = {
+UserItem.propTypes = {
   data: PropTypes.any,
   changeUser: PropTypes.func,
   setTab: PropTypes.func,
@@ -74,4 +66,4 @@ FollowingItem.propTypes = {
   onPress: PropTypes.func,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(FollowingItem);
+export default connect(mapStateToProps, mapDispatchToProps)(UserItem);
