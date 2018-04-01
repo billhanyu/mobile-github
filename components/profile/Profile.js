@@ -4,6 +4,7 @@ import { requestCurrentUserInfo, follow, unfollow, displayCurrent, displayLogin,
 import { StyleSheet, Text, View, Image, Button, ScrollView } from 'react-native';
 import PropTypes from 'prop-types';
 import MySearchBar from '../search/MySearchBar';
+import Notification from './Notification';
 
 class Profile extends Component {
   constructor(props) {
@@ -91,7 +92,7 @@ class Profile extends Component {
     const createdAt = data.created_at;
 
     const content =
-      <ScrollView style={styles.container}>
+      <ScrollView style={styles.container} automaticallyAdjustContentInsets={false}>
         <Text style={{ textAlign: 'center', fontSize: 25, paddingTop: 40 }}>{name}</Text>
         <Text style={{ textAlign: 'center', fontSize: 20, paddingTop: 20 }}>{username}</Text>
         <View style={styles.topHalf}>
@@ -129,6 +130,19 @@ class Profile extends Component {
             style={styles.linkTexts}
             title={`# Following: ${followingNum}`}>
           </Button>
+          {
+            this.props.mode == 'me' &&
+            <Button
+              onPress={() => {
+                this.props.navigator.push({
+                  title: 'Scene ',
+                  component: Notification,
+                });
+              }}
+              style={styles.logout}
+              title='Notifications'
+            />
+          }
           {
             this.props.logout &&
             <Button
@@ -245,6 +259,7 @@ Profile.propTypes = {
   loginId: PropTypes.string,
   setTab: PropTypes.func.isRequired,
   saveUsers: PropTypes.func.isRequired,
+  navigator: PropTypes.object,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profile);

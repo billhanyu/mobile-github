@@ -59,7 +59,7 @@ class App extends React.Component {
           onPress={() => this.props.setTab('me')}
           title='Me'
         >
-          <Me />
+          <Me navigator={this.props.navigator} />
         </TabBarIOS.Item>
       </TabBarIOS>
     );
@@ -83,6 +83,7 @@ App.propTypes = {
   loadUsers: PropTypes.func,
   tab: PropTypes.string,
   setTab: PropTypes.func,
+  navigator: PropTypes.object,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

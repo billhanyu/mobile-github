@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet, Linking, TouchableOpacity } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import Modal from 'react-native-modal';
 import PropTypes from 'prop-types';
 import axios from 'axios';
-import Icon from 'react-native-vector-icons/Entypo';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import RepositoryView from '../repository/RepositoryView';
 
 class RepositoryItem extends Component {
@@ -129,7 +129,7 @@ class RepositoryItem extends Component {
             <TouchableOpacity
               onPress={() => this.star(data.owner.login, data.name)}
             >
-              <Icon name='star-outlined' size={30} />
+              <Icon name='star-o' size={30} />
             </TouchableOpacity>
           }
           {this.state.starred == true &&

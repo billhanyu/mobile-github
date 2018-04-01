@@ -11,6 +11,7 @@ class Following extends Component {
     const rows = this.props.following;
     const content =
       <FlatList
+        automaticallyAdjustContentInsets={false}
         data={rows}
         keyExtractor={(item, idx) => item.login}
         renderItem={({item}) => <UserItem data={item} />}

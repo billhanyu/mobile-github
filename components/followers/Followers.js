@@ -11,6 +11,7 @@ class Followers extends Component {
     const rows = this.props.followers;
     const content =
       <FlatList
+        automaticallyAdjustContentInsets={false}
         data={rows}
         keyExtractor={(item, idx) => item.login}
         renderItem={({ item }) => <UserItem data={item} />}

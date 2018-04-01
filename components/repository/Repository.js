@@ -11,6 +11,7 @@ class Repository extends Component {
     const rows = this.props.repos;
     const content =
       <FlatList
+        automaticallyAdjustContentInsets={false}
         data={rows}
         keyExtractor={(item, idx) => item.id}
         renderItem={({ item }) => <RepositoryItem data={item} />}
