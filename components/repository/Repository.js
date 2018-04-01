@@ -14,7 +14,7 @@ class Repository extends Component {
         automaticallyAdjustContentInsets={false}
         data={rows}
         keyExtractor={(item, idx) => item.id}
-        renderItem={({ item }) => <RepositoryItem data={item} />}
+        renderItem={({ item }) => <RepositoryItem data={item} navigator={this.props.navigator} />}
         ListEmptyComponent={<NoneItem />}
       />;
     return (
@@ -34,6 +34,7 @@ function mapStateToProps(state) {
 
 Repository.propTypes = {
   repos: PropTypes.array,
+  navigator: PropTypes.object,
 };
 
 export default connect(mapStateToProps)(Repository);

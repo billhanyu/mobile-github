@@ -35,7 +35,7 @@ class App extends React.Component {
           onPress={() => this.props.setTab('repo')}
           title='Repositories'
         >
-          <Repository />
+          <Repository navigator={this.props.navigator} />
         </TabBarIOS.Item>
         <TabBarIOS.Item
           icon={require('./images/following.png')}

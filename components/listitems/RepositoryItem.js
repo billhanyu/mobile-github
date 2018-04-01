@@ -12,15 +12,9 @@ class RepositoryItem extends Component {
     super(props);
     this.state = {
       starred: 'fuck',
-      modalVisible: false,
     };
     this.star = this.star.bind(this);
     this.unstar = this.unstar.bind(this);
-    this.setModalVisible = this.setModalVisible.bind(this);
-  }
-
-  setModalVisible(visible) {
-    this.setState({ modalVisible: visible });
   }
 
   // get the username from props, might return undefined bc of 'None'
@@ -104,27 +98,14 @@ class RepositoryItem extends Component {
     return (
       <TouchableOpacity
         onPress={() => {
-          // Linking.openURL(data.html_url).catch(err => console.error('An error occurred', err));
-          this.setModalVisible(true);
+          this.props.navigator.push({
+            title: '',
+            component: RepositoryView,
+            passProps: { data },
+          });
         }}
       >
         <View style={styles.horizontal}>
-          <Modal
-            backdropColor={'red'}
-            backdropOpacity={0.1}
-            animationIn={'zoomInDown'}
-            animationOut={'zoomOutUp'}
-            animationInTiming={1000}
-            animationOutTiming={1000}
-            backdropTransitionInTiming={1000}
-            backdropTransitionOutTiming={1000}
-            transparent={false}
-            visible={this.state.modalVisible}
-            onRequestClose={() => {
-              alert('Modal has been closed.');
-            }}>
-            <RepositoryView name={data.name} setModalVisible={this.setModalVisible} />
-          </Modal>
           {this.state.starred == false &&
             <TouchableOpacity
               onPress={() => this.star(data.owner.login, data.name)}
@@ -186,6 +167,7 @@ function mapStateToProps(state) {
 RepositoryItem.propTypes = {
   authEncode: PropTypes.string,
   data: PropTypes.any,
+  navigator: PropTypes.object,
 };
 
 export default connect(mapStateToProps)(RepositoryItem);

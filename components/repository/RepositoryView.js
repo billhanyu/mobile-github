@@ -2,17 +2,25 @@ import React, { Component } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 class RepositoryView extends Component {
   render() {
     return (
-      <TouchableOpacity
-        onPress={() => this.props.setModalVisible(false)}
-        >
-        <View style={styles.full}>
-          <Text>{this.props.name}</Text>
+      <View style={styles.full}>
+        <View style={styles.navBar}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => {
+              this.props.navigator.pop();
+            }}
+          >
+            <Icon name='chevron-left' size={30} />
+          </TouchableOpacity>
+          <Text style={styles.title}>{this.props.data.name}</Text>
+          <View style={{ flex: 1 }} />
         </View>
-      </TouchableOpacity>
+      </View>
     );
   }
 }
@@ -23,19 +31,26 @@ function mapStateToProps(state) {
 
 const styles = StyleSheet.create({
   full: {
-    height: 100,
-    width: 100,
-    backgroundColor: 'red',
-    padding: 22,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 4,
-    borderColor: 'rgba(0, 0, 0, 0.1)',
+    flex: 1,
+  },
+  navBar: {
+    flexDirection: 'row',
+    marginTop: 40,
+    marginLeft: 20,
+  },
+  backButton: {
+    flex: 1,
+  },
+  title: {
+    textAlign: 'center',
+    fontSize: 24,
+    fontWeight: 'bold',
   },
 });
 
 RepositoryView.propTypes = {
-  setModalVisible: PropTypes.func.isRequired,
+  navigator: PropTypes.object,
+  data: PropTypes.object,
 };
 
 export default connect(mapStateToProps)(RepositoryView);
