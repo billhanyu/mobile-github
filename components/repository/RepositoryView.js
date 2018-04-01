@@ -6,8 +6,17 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import axios from 'axios';
 import auth from '../../constants/auth';
 import NoneItem from '../listitems/NoneItem';
+import SvgExample from './SvgExample';
+import { VictoryBar, VictoryChart, VictoryTheme } from 'victory-native';
 
 const params = { params: auth };
+
+const data = [
+  { quarter: 1, earnings: 13000 },
+  { quarter: 2, earnings: 16500 },
+  { quarter: 3, earnings: 14250 },
+  { quarter: 4, earnings: 19000 },
+];
 
 class RepositoryView extends Component {
   constructor(props) {
@@ -56,13 +65,17 @@ class RepositoryView extends Component {
           <Text style={styles.title}>{this.props.data.name}</Text>
           <View style={{ flex: 1 }} />
         </View>
-        <FlatList
+        {/* <FlatList
           automaticallyAdjustContentInsets={false}
           data={this.state.contributors}
           keyExtractor={(item, idx) => item.author.login}
           renderItem={({ item }) => <Text>{item.author.login}: {item.total}</Text>}
           ListEmptyComponent={<NoneItem />}
-        />
+        /> */}
+        <SvgExample />
+        <VictoryChart width={350} theme={VictoryTheme.material}>
+          <VictoryBar data={data} x="quarter" y="earnings" />
+        </VictoryChart>
       </View>
     );
   }
