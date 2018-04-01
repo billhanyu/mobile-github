@@ -12,6 +12,7 @@ class Repository extends Component {
     const content =
       <FlatList
         automaticallyAdjustContentInsets={false}
+        contentContainerStyle={{ paddingBottom: 50 }}
         data={rows}
         keyExtractor={(item, idx) => item.id}
         renderItem={({ item }) => <RepositoryItem data={item} navigator={this.props.navigator} />}

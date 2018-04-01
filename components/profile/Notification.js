@@ -51,6 +51,7 @@ class Notification extends Component {
         </View>
         <FlatList
           automaticallyAdjustContentInsets={false}
+          contentContainerStyle={{ paddingBottom: 50 }}
           style={styles.list}
           data={this.state.notifications}
           keyExtractor={(item, idx) => item.id}

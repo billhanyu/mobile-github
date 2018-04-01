@@ -13,6 +13,7 @@ class SearchList extends Component {
     return (
       <FlatList
         automaticallyAdjustContentInsets={false}
+        contentContainerStyle={{ paddingBottom: 50 }}
         refreshing={this.props.loading}
         data={rows}
         keyExtractor={(item, idx) => this.props.searchType == 'users' ? item.login : item.id}

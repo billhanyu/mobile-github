@@ -12,6 +12,7 @@ class Following extends Component {
     const content =
       <FlatList
         automaticallyAdjustContentInsets={false}
+        contentContainerStyle={{ paddingBottom: 50 }}
         data={rows}
         keyExtractor={(item, idx) => item.login}
         renderItem={({item}) => <UserItem data={item} />}
