@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
-import Modal from 'react-native-modal';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import Icon from 'react-native-vector-icons/FontAwesome';

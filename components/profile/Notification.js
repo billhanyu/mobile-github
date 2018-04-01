@@ -16,7 +16,6 @@ class Notification extends Component {
   }
 
   componentWillMount() {
-    console.log(this.props.authEncode);
     axios.get('https://api.github.com/notifications?all=true', {
       headers: {
         'Authorization': 'Basic ' + this.props.authEncode,
