@@ -1,28 +1,24 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import axios from 'axios';
 import auth from '../../constants/auth';
-import NoneItem from '../listitems/NoneItem';
-import SvgExample from './SvgExample';
-import { VictoryBar, VictoryChart, VictoryTheme } from 'victory-native';
+import { VictoryBar, VictoryChart, VictoryTheme, VictoryScatter } from 'victory-native';
 
 const params = { params: auth };
 
-const data = [
-  { quarter: 1, earnings: 13000 },
-  { quarter: 2, earnings: 16500 },
-  { quarter: 3, earnings: 14250 },
-  { quarter: 4, earnings: 19000 },
-];
+const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 class RepositoryView extends Component {
   constructor(props) {
     super(props);
     this.state = {
       contributors: [],
+      commits: [],
+      contributorMessage: '',
+      commitMessage: '',
     };
   }
 
@@ -31,10 +27,43 @@ class RepositoryView extends Component {
     const repo = this.props.data.name;
     axios.get(`https://api.github.com/repos/${owner}/${repo}/stats/contributors`, params)
       .then(response => {
-        console.log(response.data);
-        this.setState({
-          contributors: response.data,
-        });
+        if (response.status == 200) {
+          this.setState({
+            contributors: response.data.map(entry => {
+              return {
+                user: entry.author.login,
+                total: entry.total,
+              };
+            }),
+          });
+        } else {
+          this.setState({
+            contributorMessage: 'Loading, come back later?',
+          });
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    axios.get(`https://api.github.com/repos/${owner}/${repo}/stats/punch_card`, params)
+      .then(response => {
+        if (response.status == 200) {
+          let commits = response.data.map(entry => {
+            return {
+              x: WEEKDAYS[entry[0]],
+              y: entry[1],
+              amount: entry[2],
+            };
+          });
+          commits = commits.filter(commit => commit.amount !== 0);
+          this.setState({
+            commits,
+          });
+        } else {
+          this.setState({
+            commitMessage: 'Loading, come back later?',
+          });
+        }
       })
       .catch(err => {
         console.log(err);
@@ -49,8 +78,6 @@ class RepositoryView extends Component {
   }
 
   render() {
-    console.log(`fff`);
-    console.log(this.state.contributors);
     return (
       <View style={styles.full}>
         <View style={styles.navBar}>
@@ -65,17 +92,37 @@ class RepositoryView extends Component {
           <Text style={styles.title}>{this.props.data.name}</Text>
           <View style={{ flex: 1 }} />
         </View>
-        {/* <FlatList
-          automaticallyAdjustContentInsets={false}
-          data={this.state.contributors}
-          keyExtractor={(item, idx) => item.author.login}
-          renderItem={({ item }) => <Text>{item.author.login}: {item.total}</Text>}
-          ListEmptyComponent={<NoneItem />}
-        /> */}
-        <SvgExample />
-        <VictoryChart width={350} theme={VictoryTheme.material}>
-          <VictoryBar data={data} x="quarter" y="earnings" />
-        </VictoryChart>
+        <ScrollView
+          automaticallyAdjustContentInsets={false}>
+          <View style={styles.chart}>
+            <Text style={styles.contributorText}>Contributors by Commits</Text>
+            {
+              this.state.contributorMessage
+              ?
+                <Text>{this.state.contributorMessage}</Text>
+              :
+                <VictoryChart theme={VictoryTheme.material}>
+                  <VictoryBar data={this.state.contributors} x="user" y="total" />
+                </VictoryChart>
+            }
+            <Text style={styles.contributorText}>Commit Times</Text>
+            {
+              this.state.commitMessage
+                ?
+                <Text>{this.state.commitMessage}</Text>
+                :
+                <VictoryChart theme={VictoryTheme.material}>
+                  <VictoryScatter
+                    style={{ data: { fill: '#5779af' } }}
+                    bubbleProperty='amount'
+                    maxBubbleSize={25}
+                    minBubbleSize={0}
+                    data={this.state.commits}
+                  />
+                </VictoryChart>
+            }
+          </View>
+        </ScrollView>
       </View>
     );
   }
@@ -104,8 +151,12 @@ const styles = StyleSheet.create({
   },
   chart: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
+  },
+  contributorText: {
+    padding: 20,
+    fontSize: 20,
+    fontWeight: '500',
   },
 });
 
