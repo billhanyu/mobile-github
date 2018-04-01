@@ -18,7 +18,7 @@ class Repository extends Component {
         ListEmptyComponent={<NoneItem />}
       />;
     return (
-      <MySearchBar type='repositories' content={content} />
+      <MySearchBar navigator={this.props.navigator} type='repositories' content={content} />
     );
   }
 }

@@ -17,7 +17,7 @@ class SearchItem extends Component {
       ?
       <UserItem data={data} onPress={this.props.endSearch} />
       :
-      <RepositoryItem data={data} />
+      <RepositoryItem navigator={this.props.navigator} data={data} />
     );
   }
 }
@@ -36,6 +36,7 @@ SearchItem.propTypes = {
   data: PropTypes.any,
   searchType: PropTypes.oneOf(['users', 'repositories']),
   endSearch: PropTypes.func.isRequired,
+  navigator: PropTypes.object,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SearchItem);

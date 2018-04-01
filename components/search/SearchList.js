@@ -17,7 +17,7 @@ class SearchList extends Component {
         data={rows}
         keyExtractor={(item, idx) => this.props.searchType == 'users' ? item.login : item.id}
         renderItem={({ item }) => {
-          return <SearchItem searchType={this.props.searchType} data={item} />;
+          return <SearchItem navigator={this.props.navigator} searchType={this.props.searchType} data={item} />;
         }}
       />
     );
@@ -28,6 +28,7 @@ SearchList.propTypes = {
   loading: PropTypes.bool,
   results: PropTypes.array,
   searchType: PropTypes.oneOf(['users', 'repositories']),
+  navigator: PropTypes.object,
 };
 
 export default SearchList;

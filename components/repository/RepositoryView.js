@@ -28,13 +28,15 @@ class RepositoryView extends Component {
     axios.get(`https://api.github.com/repos/${owner}/${repo}/stats/contributors`, params)
       .then(response => {
         if (response.status == 200) {
+          const contributors = response.data.map(entry => {
+            return {
+              user: entry.author.login,
+              total: entry.total,
+            };
+          });
+          contributors.sort((a, b) => b.total - a.total);
           this.setState({
-            contributors: response.data.map(entry => {
-              return {
-                user: entry.author.login,
-                total: entry.total,
-              };
-            }),
+            contributors: contributors.slice(0, contributors.length > 5 ? 5 : contributors.length),
           });
         } else {
           this.setState({
@@ -95,7 +97,7 @@ class RepositoryView extends Component {
         <ScrollView
           automaticallyAdjustContentInsets={false}>
           <View style={styles.chart}>
-            <Text style={styles.contributorText}>Contributors by Commits</Text>
+            <Text style={styles.contributorText}>Top Contributors by Commits</Text>
             {
               this.state.contributorMessage
               ?
