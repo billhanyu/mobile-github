@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ScrollView, View, TextInput, Text, StyleSheet, Button, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { ScrollView, View, TextInput, Text, StyleSheet, Button, Keyboard } from 'react-native';
 import { requestLogin, logout } from '../../actions';
 import { connect } from 'react-redux';
 import Profile from '../profile/Profile';
@@ -35,33 +35,33 @@ class Me extends Component {
 
   render() {
     const login =
-      <TouchableWithoutFeedback onPress={()=>Keyboard.dismiss()}>
-        <ScrollView style={styles.container} onScroll={()=>Keyboard.dismiss()} scrollEventThrottle={10}>
-          <View style={styles.content}>
-            <Text style={styles.error}>{this.props.error ? 'Username or Passowrd incorrect' : ''}</Text>
-            <Text style={styles.text}>Username</Text>
-            <TextInput
-              style={styles.input}
-              autoCapitalize='none'
-              autoCorrect={false}
-              spellCheck={false}
-              onChangeText={this.onChangeUsername}
-            />
-            <Text style={styles.text}>Password</Text>
-            <TextInput
-              style={styles.input}
-              onChangeText={this.onChangePassword}
-              onSubmitEditing={this.login}
-              secureTextEntry={true}
-              returnKeyType='go'
-            />
-            <Button
-              onPress={this.login}
-              title='Log In'
-            />
-          </View>
-        </ScrollView>
-      </TouchableWithoutFeedback>;
+      <ScrollView style={styles.container} onScroll={() => Keyboard.dismiss()} scrollEventThrottle={10}>
+        <View style={styles.content}>
+          <Text style={styles.error}>{this.props.error ? 'Username or Passowrd incorrect' : ''}</Text>
+          <Text style={styles.text}>Username</Text>
+          <TextInput
+            accessibilityLabel='usernameInput'
+            style={styles.input}
+            autoCapitalize='none'
+            autoCorrect={false}
+            spellCheck={false}
+            onChangeText={this.onChangeUsername}
+          />
+          <Text style={styles.text}>Password</Text>
+          <TextInput
+            accessibilityLabel='passwordInput'
+            style={styles.input}
+            onChangeText={this.onChangePassword}
+            onSubmitEditing={this.login}
+            secureTextEntry={true}
+            returnKeyType='go'
+          />
+          <Button
+            onPress={this.login}
+            title='Log In'
+          />
+        </View>
+      </ScrollView>;
 
     const profile = <Profile navigator={this.props.navigator} logout={this.props.logout} mode='me' />;
 
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
 });
 
 function mapStateToProps(state) {
-  return {...state.login};
+  return { ...state.login };
 }
 
 function mapDispatchToProps(dispatch) {

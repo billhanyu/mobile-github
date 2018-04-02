@@ -4,8 +4,12 @@ const path = require('path');
 
 app.use(express.static(__dirname));
 
-app.get('/7plus112.ipa', (req, res) => {
+app.get('/mobilegithub.ipa', (req, res) => {
   res.sendFile(path.resolve(__dirname, './mobilegithub.ipa'));
+});
+
+app.get('/mobilegithub.app', (req, res) => {
+  res.sendFile(path.resolve(__dirname, './mobilegithub.zip'));
 });
 
 let server;
